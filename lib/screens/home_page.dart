@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:wearhouse/const/color.dart';
+import 'package:wearhouse/provider/login_details.provider.dart';
 import 'package:wearhouse/screens/receive_page.dart';
+import 'package:wearhouse/services/api/recive_api.dart';
+
+import '../provider/recive_orders_provider.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
-
+  static const routename = "home_page";
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -138,10 +143,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderRadius: BorderRadius.circular(10)),
                   child: GestureDetector(
                     onTap: () {
+                      RecieveAPI().recievedoders(context: context);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const ReceiveOrders()));
+                              builder: (context) => ReceiveOrders()));
+                      ChangeNotifier();
                     },
                     child: Container(
                       child: Column(

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wearhouse/provider/login_auth_provider.dart';
+import 'package:wearhouse/provider/login_details.provider.dart';
+import 'package:wearhouse/provider/recive_orders_provider.dart';
+import 'package:wearhouse/screens/home_page.dart';
 import 'package:wearhouse/screens/login_page.dart';
+import 'package:wearhouse/screens/receive_page.dart';
+import 'package:wearhouse/services/api/recive_api.dart';
 
 import 'provider/device_info.dart';
 
@@ -20,6 +25,12 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(value: AuthProvider()),
         ChangeNotifierProvider.value(value: DeviceInformation()),
+        ChangeNotifierProvider.value(value: RecievedDetails()),
+        ChangeNotifierProvider.value(value: UserDetails()),
+        ChangeNotifierProvider.value(
+          value: RecieveAPI(),
+        ),
+        // ChangeNotifierProvider.value(value: const MyHomePage())
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -28,7 +39,11 @@ class MyApp extends StatelessWidget {
         ),
         home: const LoginPage(),
         debugShowCheckedModeBanner: false,
-        routes: {'login-screen': (context) => const LoginPage()},
+        routes: {
+          'login-screen': (context) => const LoginPage(),
+          'recieve-page': (context) => const ReceiveOrders(),
+          'home_page': (context) => const MyHomePage()
+        },
       ),
     );
   }
