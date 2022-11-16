@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class RecievedDetails with ChangeNotifier {
+class ParticularOrders with ChangeNotifier {
   String _createDate = "";
   String _displayName = "";
   String _id = "";
@@ -72,6 +71,9 @@ class RecievedDetails with ChangeNotifier {
       return _transportDate;
     }
   }
+}
+
+
 
   // Future<void> getAllRecievedorders() async {
   //   final prefs = await SharedPreferences.getInstance();
@@ -85,4 +87,4 @@ class RecievedDetails with ChangeNotifier {
 
   //   notifyListeners();
   // }
-}
+

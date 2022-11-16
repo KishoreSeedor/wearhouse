@@ -15,4 +15,5 @@ class CustomColor {
   static const yellowcolor = Color(0xffFFA133);
   static const greencolor = Color(0xff27AE60);
   static const redcolor = Color(0xffFF1717);
+  static const lightPink = Color(0xffFFE1DC);
 }

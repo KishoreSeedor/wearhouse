@@ -1,24 +1,44 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:provider/provider.dart';
 import 'package:wearhouse/const/color.dart';
-
+import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:wearhouse/screens/recieved_orders_select.dart';
+import 'package:wearhouse/services/api/recive_api.dart';
 
-class BarcodeScanner extends StatefulWidget {
-  const BarcodeScanner({
+class BarcodeScannerPage extends StatefulWidget {
+  const BarcodeScannerPage({
     super.key,
   });
 
   @override
-  State<BarcodeScanner> createState() => _BarcodeScannerState();
+  State<BarcodeScannerPage> createState() => _BarcodeScannerPageState();
 }
 
-class _BarcodeScannerState extends State<BarcodeScanner> {
+String _val = "";
+
+String get val {
+  if (_val == "") {
+    _val = "Not yet updated";
+    return _val;
+  } else {
+    return _val;
+  }
+}
+
+bool isLoade = false;
+
+class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
   MobileScannerController cameraController = MobileScannerController();
   bool _screenOpened = false;
   // bool torch = false;
   bool hasflashlight = false;
   bool isturnon = false;
+
+  final player = AudioPlayer();
 
   @override
   void dispose() {
@@ -30,6 +50,7 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
   @override
   Widget build(BuildContext context) {
     var hi = MediaQuery.of(context).size.height;
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -97,7 +118,7 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
               height: 200,
               width: 400,
               child: MobileScanner(
-                allowDuplicates: true,
+                allowDuplicates: false,
                 controller: cameraController,
                 onDetect: _getQRcode,
               ),
@@ -108,46 +129,60 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
     );
   }
 
-  void _getQRcode(Barcode qrCode, MobileScannerArguments? args) {
+  Future<void> _getQRcode(Barcode qrCode, MobileScannerArguments? args) async {
     // TorchState val = cameraController.torchState as TorchState;
 
+    final users = Provider.of<RecieveAPI>(context, listen: false);
+
     if (!_screenOpened) {
-      final String code = qrCode.rawValue ?? "---";
-      debugPrint("QRcode Fout --> $code");
+      String code = qrCode.rawValue.toString().trim();
+      AudioPlayer().play(AssetSource("audio/scanner.mp3"));
+      print("QRcode Fount -->$code");
+
+      var val = code;
+
+      // users.particularOrders(context: context, domain: code);
+
       _screenOpened = true;
-      // var torch = TorchState.on;
-      // print(TorchState.on.name + 'hello hello');
-      // if (torch == true) {
-      //   print("hello world");
-      //   cameraController.toggleTorch();
-      // }
-      // Navigator.push(
-      //     context,
-      //     MaterialPageRoute(
-      //         builder: (context) => FountCode(
-      //               screenClose: _screenWasClosed,
-      //               value: code,
-      //             )));
-      showDialog(
-          context: context,
-          builder: (BuildContext? context) {
-            return AlertDialog(
-              title: Text("QR Code"),
-              content: Text(code),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      // Navigator.push(
-                      //     context!,
-                      //     MaterialPageRoute(
-                      //         builder: (context) => ReceiveOrders()));
-                      Navigator.pop(context!);
-                      Navigator.pop(context);
-                    },
-                    child: Text("OK"))
-              ],
-            );
-          });
+
+      Navigator.pop(context);
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => OrdersSelectPage(
+                    barcode: code,
+                  )));
     }
+
+    cameraController.dispose();
+
+    //showDialog is used for previously get the code info from Qrcode now it's not needed
+
+    // showDialog(
+    //     context: context,
+    //     builder: (BuildContext? context) {
+    //       return AlertDialog(
+    //         title: Text("QR Code"),
+    //         content: Text(code),
+    //         actions: [
+    //           TextButton(
+    //               onPressed: () {
+    //                 // RecieveAPI()
+    //                 //     .particularOrders(context: context!, domain: code);
+    //                 Navigator.pop(context!);
+
+    //                 Navigator.pop(context);
+    //                 Navigator.push(
+    //                     context,
+    //                     MaterialPageRoute(
+    //                         builder: (context) => OrdersSelectPage()));
+
+    //                 cameraController.dispose();
+    //               },
+    //               child: Text("OK"))
+    //         ],
+    //       );
+    //     });
   }
 }

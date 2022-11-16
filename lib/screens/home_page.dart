@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
+
 import 'package:wearhouse/const/color.dart';
-import 'package:wearhouse/provider/login_details.provider.dart';
+
 import 'package:wearhouse/screens/receive_page.dart';
 import 'package:wearhouse/services/api/recive_api.dart';
-
-import '../provider/recive_orders_provider.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -81,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.black, width: 3),
                       image: const DecorationImage(
-                          image: AssetImage('assets/images/Profileimage.png'),
+                          image: AssetImage('assets/images/DP.png'),
                           fit: BoxFit.fill),
                     ),
                   ),
@@ -107,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       Row(
                         children: [
-                          Container(
+                          SizedBox(
                             height: height * 0.050,
                             width: width * 0.050,
                             child: Image.asset(
@@ -147,14 +145,20 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ReceiveOrders()));
+                              builder: (context) => const ReceiveOrders()));
                       ChangeNotifier();
                     },
                     child: Container(
+                      height: height * 0.2,
+                      width: height * 0.2,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: CustomColor.white,
+                      ),
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
+                            const Text(
                               "Receive",
                               style: TextStyle(
                                   fontSize: 25,
@@ -170,12 +174,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               width: width / 8,
                             )
                           ]),
-                      height: height * 0.2,
-                      width: height * 0.2,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: CustomColor.white,
-                      ),
                     ),
                   ),
                 ),
@@ -187,6 +185,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                   child: Container(
+                    height: height * 0.2,
+                    width: height * 0.2,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: CustomColor.white,
+                    ),
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -206,12 +210,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             width: width / 8,
                           )
                         ]),
-                    height: height * 0.2,
-                    width: height * 0.2,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: CustomColor.white,
-                    ),
                   ),
                 ),
               ],
@@ -267,16 +265,16 @@ class _MyHomePageState extends State<MyHomePage> {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                            children: const [
                               // ignore: prefer_const_constructors
                               Text(
                                 "You have checked",
-                                style: const TextStyle(
+                                style: TextStyle(
                                     color: CustomColor.homepageBgColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18),
                               ),
-                              const Text(
+                              Text(
                                 "12 Packages",
                                 style: TextStyle(
                                     color: CustomColor.homepageBgColor,
@@ -291,12 +289,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   Expanded(
                     flex: 1,
-                    child: Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: Image.asset(
-                          "assets/images/leftarrow.png",
-                        ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Image.asset(
+                        "assets/images/leftarrow.png",
                       ),
                     ),
                   )

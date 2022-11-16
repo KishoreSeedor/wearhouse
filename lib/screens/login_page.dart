@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wearhouse/const/color.dart';
 import 'package:wearhouse/provider/device_info.dart';
-import 'package:wearhouse/screens/home_page.dart';
+
 import 'package:wearhouse/services/dialogue.dart';
 import 'package:wearhouse/provider/login_auth_provider.dart';
 
@@ -33,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
-  bool _obsecureText = true;
+  bool obsecureText = true;
   final _fromKey = GlobalKey<FormState>();
   final GlobalServices _services = GlobalServices();
 
@@ -41,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
     showDialog(
         context: context,
         builder: ((context) {
-          return Center(
+          return const Center(
               child: CircularProgressIndicator(
             color: CustomColor.yellow,
           ));
@@ -66,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
         password: _passwordController.text,
         context: context,
       );
-      print('loginApi');
+      debugPrint('loginApi');
     }
   }
 
@@ -93,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Color(0xFFEBEBEB),
+                        color: const Color(0xFFEBEBEB),
                       ),
                       width: width * 0.9,
                       child: Column(
@@ -105,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                                   top: height * 0.02,
                                   left: width * 0.1,
                                   bottom: height * 0.01),
-                              child: Text(
+                              child: const Text(
                                 "Enter Username",
                                 style: TextStyle(
                                     color: CustomColor.darkwhite,
@@ -129,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                                     fillColor: CustomColor.white,
                                     enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                             color: Colors.black, width: 2)),
                                   ),
                                 ),
@@ -140,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                                   top: height * 0.01,
                                   left: width * 0.1,
                                   bottom: height * 0.01),
-                              child: Text(
+                              child: const Text(
                                 "Enter Password",
                                 style: TextStyle(
                                     color: CustomColor.darkwhite,
@@ -165,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                                     fillColor: CustomColor.white,
                                     enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                             color: Colors.black, width: 2)),
                                   ),
                                 ),
@@ -178,31 +178,37 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(
-                    height: height * 0.035,
+                    height: height * 0.08,
                   ),
                   Center(
                     child: Container(
-                        height: height * 0.08,
-                        width: width * 0.8,
-                        decoration: BoxDecoration(
-                            color: CustomColor.yellow,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: ElevatedButton(
-                            onPressed: () {
-                              sumit();
-                            },
-                            child: Text(
-                              loading.isLoading ? "Loading" : 'Sign In',
-                              style: TextStyle(
-                                color: CustomColor.white,
-                                fontSize: 25,
-                              ),
-                            ))),
+                      height: height * 0.06,
+                      width: width * 0.8,
+                      decoration: BoxDecoration(
+                          color: CustomColor.yellow,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          sumit();
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: CustomColor.yellow,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                        child: Text(
+                          loading.isLoading ? "Loading" : 'Log in',
+                          style: const TextStyle(
+                            color: CustomColor.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                   SizedBox(
                     height: height * 0.035,
                   ),
-                  Center(
+                  const Center(
                       child: Text(
                     "Version 1.0.0 Developed By Seedor",
                     style: TextStyle(color: Color(0xFFC6C6C6), fontSize: 16),

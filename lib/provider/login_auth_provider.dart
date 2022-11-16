@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wearhouse/const/config.dart';
 import 'package:flutter/material.dart';
+
 import 'package:wearhouse/services/snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:wearhouse/screens/home_page.dart';
@@ -51,11 +52,13 @@ class AuthProvider with ChangeNotifier {
         await globalSnackBar.successsnackbar(
             context: context,
             text: "Your Account has been created sucessfully");
+        // ignore: unrelated_type_equality_checks
       } else if (response.body == 500) {
         Navigator.of(context).pop();
         await globalSnackBar.genarelSnackbar(
             context: context,
             text: "User Already present with this email please try signIn");
+        // ignore: unrelated_type_equality_checks
       } else if (response.body == 404) {
         Navigator.of(context).pop();
         await globalSnackBar.genarelSnackbar(
@@ -65,7 +68,7 @@ class AuthProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     } on HttpException catch (e) {
-      print("Register API error -->${e.message}");
+      debugPrint("Register API error -->${e.message}");
       await globalSnackBar.genarelSnackbar(
           context: context, text: e.message.toString());
     }
@@ -93,13 +96,13 @@ class AuthProvider with ChangeNotifier {
         'os_type': device.deviceName,
         'client_id': clind_id
       });
-      print(body.toString());
+      debugPrint(body.toString());
       var response = await http.post(
           Uri.parse('http://eiuat.seedors.com:8290/seedor-api-login'),
           headers: header,
           body: body);
-      print("http://eiuat.seedors.com:8290/customer-app/login");
-      print("${response.body}hauwhdoaodhu");
+      debugPrint("http://eiuat.seedors.com:8290/customer-app/login");
+      debugPrint("${response.body}hauwhdoaodhu");
       var jsonData = json.decode(response.body);
       if (response.statusCode == 200) {
         prefs.setString('partner_id', jsonData["partner_id"].toString());
@@ -141,6 +144,7 @@ class AuthProvider with ChangeNotifier {
             MaterialPageRoute(
                 builder: (BuildContext context) => const MyHomePage()),
             (Route<dynamic> route) => false);
+
         await globalSnackBar.successsnackbar(
             context: context, text: "Logged in successfull");
       } else {
@@ -156,7 +160,7 @@ class AuthProvider with ChangeNotifier {
         notifyListeners();
       }
     } on HttpException catch (e) {
-      print("login api error --> ${e.message}");
+      debugPrint("login api error --> ${e.message}");
       await globalSnackBar.genarelSnackbar(
           context: context, text: e.message.toString());
     }

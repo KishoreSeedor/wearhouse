@@ -1,42 +1,27 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:wearhouse/const/color.dart';
-import 'package:wearhouse/models/reciveorders_model.dart';
-import 'package:wearhouse/screens/recieved_orders_select.dart';
 import 'package:wearhouse/services/api/recive_api.dart';
-
-import 'bottom_widget.dart';
+import '../const/color.dart';
+import '../models/recived_details_model.dart';
 import 'received_page_container.dart';
 
-class ReceiveOrders extends StatefulWidget {
-  const ReceiveOrders({
-    super.key,
-  });
-  static const routname = 'recieve_page';
+class OrdersSelectPage extends StatefulWidget {
+  final String barcode;
+  const OrdersSelectPage({super.key, required this.barcode});
+
+  static const routename = "orders_page";
 
   @override
-  State<ReceiveOrders> createState() => _ReceiveOrdersState();
+  State<OrdersSelectPage> createState() => _OrdersSelectPageState();
 }
 
 bool _visible = false;
 
-class _ReceiveOrdersState extends State<ReceiveOrders> {
-  AudioPlayer audioPlayer = AudioPlayer();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
+class _OrdersSelectPageState extends State<OrdersSelectPage> {
   @override
   Widget build(BuildContext context) {
-    final orders = Provider.of<RecieveAPI>(context, listen: false);
+    // user provider is now not used in this page
+    // final user = Provider.of<RecieveAPI>(context, listen: false);
+    // final users = user.par;
 
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
@@ -259,60 +244,88 @@ class _ReceiveOrdersState extends State<ReceiveOrders> {
           ),
         ],
       ),
-      body: FutureBuilder<List<RecivedOrdersModel>>(
-        future: orders.recievedoders(context: context),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            debugPrint('${snapshot.data!.length}hello hello');
-            return ListView.separated(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+      body: FutureBuilder<RecievedDetails?>(
+          future: RecieveAPI()
+              .particularOrders(context: context, domain: widget.barcode),
+          builder: (context, snapshot) {
+            debugPrint("new Value --> ${snapshot.data}");
+            if (snapshot.hasData) {
+              print(snapshot.data!.toString() + 'hellos hellos');
+              return SafeArea(
+                child: Column(
                   children: [
-                    Container(
-                        padding: const EdgeInsets.all(13),
-                        margin: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: CustomColor.gray200,
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: height * 0.04,
+                          bottom: height * 0.02,
+                          left: width * 0.04),
+                      child: SizedBox(
+                        height: height * 0.06,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Image.asset("assets/images/Barcode2.png"),
+                            SizedBox(
+                              width: width * 0.03,
+                            ),
+                            Expanded(
+                              flex: 4,
+                              child: Text(
+                                snapshot.data!.id.toString(),
+                                style: const TextStyle(
+                                    fontSize: 23, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            SizedBox(
+                              width: width * 0.2,
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child: IconButton(
+                                  onPressed: () {},
+                                  icon: Padding(
+                                    padding: EdgeInsets.all(height * 0.004),
+                                    child:
+                                        Image.asset("assets/images/close.png"),
+                                  )),
+                            )
+                          ],
                         ),
-                        child: RecievedContainer(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => OrdersSelectPage(
-                                        barcode: snapshot.data![index].id)));
-                          },
-                          height: height,
-                          width: width,
-                          companyName: snapshot.data![index].companyName,
-                          createDate:
-                              snapshot.data![index].createDate.toString(),
-                          origin: snapshot.data![index].origin.toString(),
-                          displayName:
-                              snapshot.data![index].displayName.toString(),
-                        )),
+                      ),
+                    ),
+                    Divider(
+                      thickness: 3,
+                      color: CustomColor.yellow,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(18),
+                      margin: const EdgeInsets.all(9),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: CustomColor.lightPink,
+                      ),
+                      child: RecievedContainer(
+                        onTap: () {},
+                        companyName: snapshot.data!.companyName,
+                        createDate: snapshot.data!.createDate.toString(),
+                        displayName: snapshot.data!.displayName.toString(),
+                        height: height,
+                        origin: snapshot.data!.origin.toString(),
+                        width: width,
+                      ),
+                    ),
                   ],
-                );
-              },
-              separatorBuilder: (BuildContext context, int itemCount) {
-                return const Divider(
-                  thickness: 2,
+                ),
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(
                   color: CustomColor.yellow,
-                );
-              },
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(color: CustomColor.yellow),
-            );
-          }
-        },
-      ),
-      floatingActionButton: BottomWidgets(width: width, height: height),
+                ),
+              );
+            }
+          }),
     );
   }
 }
