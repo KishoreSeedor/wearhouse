@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:wearhouse/screens/recieved_orders_select.dart';
 
 import '../const/color.dart';
 import '../services/bar_code_scaner.dart';
 
 class BottomWidgets extends StatelessWidget {
-  const BottomWidgets({
+  BottomWidgets({
     Key? key,
     required this.width,
     required this.height,
+    required this.barcode,
   }) : super(key: key);
 
   final double width;
   final double height;
+  final String barcode;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +28,7 @@ class BottomWidgets extends StatelessWidget {
               heroTag: null,
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const BarcodeScannerPage()));
+                    builder: (context) => BarcodeScannerPage()));
               },
               backgroundColor: CustomColor.yellow,
               foregroundColor: Colors.black,

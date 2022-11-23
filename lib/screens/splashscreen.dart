@@ -21,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final loginData = Provider.of<UserDetails>(context, listen: false);
     loginData.getAllDetails().then((value) {
       Future.delayed(const Duration(seconds: 3), () {
-        print(loginData.email + ' email value');
+        debugPrint('${loginData.email} email value');
         loginData.email == 'Not yet updated'
             ? Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (BuildContext context) => const LoginPage()))
@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    // Size size = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: CustomColor.white,
         body: Column(
@@ -42,7 +42,7 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             Center(
               child: Container(
-                child: Text(
+                child: const Text(
                   "WareHouse",
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),

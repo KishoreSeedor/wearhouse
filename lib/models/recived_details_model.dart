@@ -10,8 +10,11 @@ class RecievedDetails {
     required this.companyName,
     required this.scheduledDate,
     required this.transportDate,
+    required this.isVisible,
+    // required  visible,
   });
 
+  bool isVisible;
   String barcode;
   String createDate;
   String date;

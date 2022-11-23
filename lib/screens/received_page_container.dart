@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../const/color.dart';
 
-class RecievedContainer extends StatefulWidget {
-  const RecievedContainer({
+class ReceivedContainer extends StatefulWidget {
+  const ReceivedContainer({
     Key? key,
     required this.onTap,
     required this.height,
@@ -22,16 +22,16 @@ class RecievedContainer extends StatefulWidget {
   final GestureTapCancelCallback? onTap;
 
   @override
-  State<RecievedContainer> createState() => _RecievedContainerState();
+  State<ReceivedContainer> createState() => _ReceivedContainerState();
 }
 
-class _RecievedContainerState extends State<RecievedContainer> {
+class _ReceivedContainerState extends State<ReceivedContainer> {
   @override
   Widget build(BuildContext context) {
     // var hi = MediaQuery.of(context).size.height;
     // var wi = MediaQuery.of(context).size.width;
 
-    return GestureDetector(
+    return InkWell(
       onTap: widget.onTap,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,

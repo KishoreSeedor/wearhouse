@@ -1,40 +1,26 @@
-import 'dart:ffi';
-
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
-import 'package:wearhouse/const/color.dart';
-import 'package:barcode_scan2/barcode_scan2.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:wearhouse/models/orders_line_model.dart';
 import 'package:wearhouse/screens/receive_orders_line.dart';
-import 'package:wearhouse/screens/received_order_line2.dart';
 import 'package:wearhouse/screens/recieved_orders_select.dart';
-import 'package:wearhouse/services/api/recive_api.dart';
+import 'package:wearhouse/services/bar_code_scaner.dart';
 
-class BarcodeScannerPage extends StatefulWidget {
-  BarcodeScannerPage({
-    super.key,
-  });
+import '../const/color.dart';
+import '../screens/received_order_line2.dart';
+import 'api/recive_api.dart';
+import 'order_line_data.dart';
+
+class BarcodeScanner2 extends StatefulWidget {
+  final String barcode;
+  const BarcodeScanner2({super.key, required this.barcode});
 
   @override
-  State<BarcodeScannerPage> createState() => _BarcodeScannerPageState();
+  State<BarcodeScanner2> createState() => _BarcodeScanner2State();
 }
 
-String _val = "";
-
-String get val {
-  if (_val == "") {
-    _val = "Not yet updated";
-    return _val;
-  } else {
-    return _val;
-  }
-}
-
-bool isLoade = false;
-
-class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
+class _BarcodeScanner2State extends State<BarcodeScanner2> {
   MobileScannerController cameraController = MobileScannerController();
   bool _screenOpened = false;
   // bool torch = false;
@@ -42,13 +28,6 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
   bool isturnon = false;
 
   final player = AudioPlayer();
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    cameraController.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,18 +115,16 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
     // TorchState val = cameraController.torchState as TorchState;
 
     final users = Provider.of<RecieveAPI>(context, listen: false);
-
+    var dataA = '';
     if (!_screenOpened) {
       String code = qrCode.rawValue.toString().trim();
       AudioPlayer().play(AssetSource("audio/scanner.mp3"));
       print("QRcode Fount -->$code");
-
-      // Navigator.pop(context);
+      dataA = code;
       Navigator.pop(context);
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => OrdersSelectPage(barcode: code)));
+      await OrderListFunction()
+          .orderLineData(barcodeId: code, context: context);
+      print("second code--> $code");
 
       // users.particularOrders(context: context, domain: code);
       // Navigator.pop(context);

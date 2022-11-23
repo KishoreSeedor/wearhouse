@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:wearhouse/screens/receive_orders_line.dart';
+import 'package:wearhouse/screens/receive_page.dart';
 import 'package:wearhouse/services/api/recive_api.dart';
 import '../const/color.dart';
 import '../models/recived_details_model.dart';
@@ -250,7 +253,7 @@ class _OrdersSelectPageState extends State<OrdersSelectPage> {
           builder: (context, snapshot) {
             debugPrint("new Value --> ${snapshot.data}");
             if (snapshot.hasData) {
-              print(snapshot.data!.toString() + 'hellos hellos');
+              print('${snapshot.data!}hellos hellos');
               return SafeArea(
                 child: Column(
                   children: [
@@ -294,7 +297,7 @@ class _OrdersSelectPageState extends State<OrdersSelectPage> {
                         ),
                       ),
                     ),
-                    Divider(
+                    const Divider(
                       thickness: 3,
                       color: CustomColor.yellow,
                     ),
@@ -305,8 +308,17 @@ class _OrdersSelectPageState extends State<OrdersSelectPage> {
                         borderRadius: BorderRadius.circular(15),
                         color: CustomColor.lightPink,
                       ),
-                      child: RecievedContainer(
-                        onTap: () {},
+                      child: ReceivedContainer(
+                        onTap: () {
+                          setState(() {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => OrdersLinePage1(
+                                        barcode: widget.barcode)));
+                            _visible = false;
+                          });
+                        },
                         companyName: snapshot.data!.companyName,
                         createDate: snapshot.data!.createDate.toString(),
                         displayName: snapshot.data!.displayName.toString(),

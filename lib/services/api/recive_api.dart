@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as https;
+import 'package:wearhouse/const/config.dart';
+import 'package:wearhouse/models/orders_line_model.dart';
 import 'package:wearhouse/provider/login_details.provider.dart';
 import 'package:wearhouse/provider/recive_orders_provider.dart';
 
@@ -35,6 +37,7 @@ class RecieveAPI with ChangeNotifier {
 
   List<RecivedOrdersModel> _rec = [];
   RecievedDetails? _par;
+  List<OrderLine> _ord = [];
 
   List<RecivedOrdersModel> get rec {
     // ignore: unrelated_type_equality_checks
@@ -56,6 +59,16 @@ class RecieveAPI with ChangeNotifier {
     }
   }
 
+  List<OrderLine> get ord {
+    if (_ord == "") {
+      _ord = "Not yet updated" as List<OrderLine>;
+      return _ord;
+      notifyListeners();
+    } else {
+      return _ord;
+    }
+  }
+
   Future<List<RecivedOrdersModel>> recievedoders(
       {required BuildContext context}) async {
     _isLoading = true;
@@ -74,8 +87,8 @@ class RecieveAPI with ChangeNotifier {
 
     var url =
         "http://eiuat.seedors.com:8290/seedor-api/warehouse/received-orders?fields={'id','scheduled_date','origin','transport_date','display_name','date','partner_id','create_date','barcode'}&clientid=$clinedId";
-    print(
-        "http://eiuat.seedors.com:8290/seedor-api/warehouse/received-orders?fields={'id','scheduled_date','origin','transport_date','display_name','date','partner_id','create_date','barcode'}&clientid=$clinedId");
+    // print(
+    //     "http://eiuat.seedors.com:8290/seedor-api/warehouse/received-orders?fields={'id','scheduled_date','origin','transport_date','display_name','date','partner_id','create_date','barcode'}&clientid=$clinedId");
     try {
       https.Response response =
           await https.get(Uri.parse(url), headers: headers);
@@ -132,8 +145,8 @@ class RecieveAPI with ChangeNotifier {
 
     var url =
         "http://eiuat.seedors.com:8290/seedor-api/warehouse/received-orders?fields={'id','scheduled_date','origin','transport_date','display_name','date','partner_id','create_date','barcode'}&clientid=$clinedId&domain=[('id','=',$domain)]";
-    print(
-        "http://eiuat.seedors.com:8290/seedor-api/warehouse/received-orders?fields={'id','scheduled_date','origin','transport_date','display_name','date','partner_id','create_date','barcode'}&clientid=$clinedId&domain=[('id','=',$domain)]");
+    // print(
+    //     "http://eiuat.seedors.com:8290/seedor-api/warehouse/received-orders?fields={'id','scheduled_date','origin','transport_date','display_name','date','partner_id','create_date','barcode'}&clientid=$clinedId&domain=[('id','=',$domain)]");
     try {
       https.Response response =
           await https.get(Uri.parse(url), headers: header);
@@ -141,6 +154,7 @@ class RecieveAPI with ChangeNotifier {
       var jsonData = json.decode(response.body);
       if (response.statusCode == 200) {
         getDetails = (RecievedDetails(
+          // isVisible: false,
           barcode: jsonData[0]["barcode"].toString(),
           createDate: jsonData[0]["create_date"].toString(),
           date: jsonData[0]["date"].toString(),
@@ -151,6 +165,7 @@ class RecieveAPI with ChangeNotifier {
           companyName: jsonData[0]["partner_id"][1].toString(),
           scheduledDate: jsonData[0]["scheduled_date"].toString(),
           transportDate: jsonData[0]["transport_date"].toString(),
+          isVisible: true,
         ));
 
         // print(getDetails.id);
@@ -172,5 +187,65 @@ class RecieveAPI with ChangeNotifier {
       print(e);
     }
     return _par;
+  }
+
+  Future<List<OrderLine>> orderLine(
+      {required BuildContext context, required String domain}) async {
+    _isLoading = true;
+
+    var user = Provider.of<UserDetails>(context, listen: false);
+
+    List<OrderLine> getDetails = [];
+
+    await user.getAllDetails();
+
+    var headers = {
+      'Cookie':
+          'session_id=ad9b3d63d0f6e25ada8e6568cf58fa1a599002b9; session_id=11f5121f566165d27cf73b9a28432ad6d0b3597b'
+    };
+
+    String clainedId = user.clientID;
+
+    var url =
+        "http://eiuat.seedors.com:8290/seedor-api/warehouse/received-order-line?fields={'product_id','product_uom_qty','quantity_done','picking_partner_id','display_name','picking_id'}&clientid=$clainedId&domain=[('picking_id','=',$domain)]";
+
+    print(
+        "order line -->http://eiuat.seedors.com:8290/seedor-api/warehouse/received-order-line?fields={'product_id','product_uom_qty','quantity_done','picking_partner_id','display_name'}&clientid=$clainedId&domain=[('picking_id','=',$domain)]");
+
+    try {
+      https.Response response =
+          await https.get(Uri.parse(url), headers: headers);
+      var jsonData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        for (var i = 0; i < jsonData.length; i++) {
+          getDetails.add(OrderLine(
+            pickingId: jsonData[i]['picking_id'][0].toString(),
+            pickingName: jsonData[i]['picking_id'][1].toString(),
+            displayName: jsonData[i]['display_name'].toString(),
+            id: jsonData[i]['id'].toString(),
+            pickingPartnerId: jsonData[i]['picking_partner_id'][0].toString(),
+            pickingPartnerName: jsonData[i]['picking_partner_id'][1].toString(),
+            productId: jsonData[i]['product_id'][0].toString(),
+            productName: jsonData[i]['product_id'][1].toString(),
+            productOnQty: jsonData[i]['product_uom_qty'].toString(),
+            quantityDone: jsonData[i]['quantity_done'].toString(),
+          ));
+
+          _ord = getDetails;
+          notifyListeners();
+          print(par);
+
+          print(rec.length.toString() + "---> fav data length");
+          _isLoading = false;
+          print('OOOOOOO' + getDetails.toString());
+          notifyListeners();
+
+          print(response.reasonPhrase);
+        }
+      } else {}
+    } on HttpException catch (e) {
+      print(e);
+    }
+    return _ord;
   }
 }
