@@ -132,6 +132,8 @@ class _BarcodeScanner2State extends State<BarcodeScanner2> {
       cameraController.dispose();
     }
 
+    //open
+
     //showDialog is used for previously get the code info from Qrcode now it's not needed
 
     // showDialog(

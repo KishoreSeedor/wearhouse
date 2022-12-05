@@ -9,7 +9,7 @@ class OrderListFunction {
     OrderLine? datass;
 
     for (var i = 0; i < globalorderLine.length; i++) {
-      print("thired Print ${globalorderLine[i].id}");
+      print("thired Print ${globalorderLine[i].userid}");
       if (globalorderLine[i].pickingId == barcodeId) {
         datass = globalorderLine[i];
         globallineDateTwo = globalorderLine[i];
@@ -23,5 +23,18 @@ class OrderListFunction {
       }
     }
     return datass;
+  }
+
+  Future<String?> appBarData(
+      {required BuildContext context, required String barcodeId}) async {
+    String newData;
+
+    for (var i = 0; i < globalorderLine.length; i++) {
+      if (globalorderLine[i].pickingId == barcodeId) {
+        globallineDateTwo = globalorderLine[i];
+        Text(
+            '${globalorderLine[i].quantityDone.toString()}/${globalorderLine[i].productOnQty.toString()}');
+      }
+    }
   }
 }

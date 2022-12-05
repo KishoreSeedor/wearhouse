@@ -109,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
                               child: const Text(
                                 "Enter Username",
                                 style: TextStyle(
-                                    color: CustomColor.darkwhite,
+                                    color: CustomColor.darkword,
                                     fontSize: 20,
                                     fontWeight: FontWeight.w500),
                               ),
@@ -144,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                               child: const Text(
                                 "Enter Password",
                                 style: TextStyle(
-                                    color: CustomColor.darkwhite,
+                                    color: CustomColor.darkword,
                                     fontSize: 20,
                                     fontWeight: FontWeight.w500),
                               ),
@@ -197,9 +197,9 @@ class _LoginPageState extends State<LoginPage> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10))),
                         child: Text(
-                          loading.isLoading ? "Loading" : 'Log in',
+                          loading.isLoading ? "Loading" : 'Login',
                           style: const TextStyle(
-                            color: CustomColor.white,
+                            color: CustomColor.darkwhite,
                             fontSize: 18,
                           ),
                         ),

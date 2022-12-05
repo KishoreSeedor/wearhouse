@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:wearhouse/models/orders_line_model.dart';
 import 'package:wearhouse/models/recived_details_model.dart';
+import 'package:wearhouse/screens/receive_orders_line.dart';
+import 'package:wearhouse/services/alert_box.dart';
 import 'package:wearhouse/services/api/recive_api.dart';
+import 'package:wearhouse/services/bar_code_scaner.dart';
+import 'package:wearhouse/services/snackbar.dart';
 
 import '../const/color.dart';
+
 import 'bottom_widget.dart';
 
 // ignore: must_be_immutable
@@ -18,9 +24,25 @@ class OrederLinePage2 extends StatefulWidget {
 }
 
 class _OrederLinePage2State extends State<OrederLinePage2> {
-  final quantityController = TextEditingController();
+  TextEditingController? quantityController;
+
+  @override
+  void initState() {
+    quantityController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    quantityController!.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    GlobalAlertBox globalAlertBox = GlobalAlertBox();
+    final data = Provider.of<RecieveAPI>(context);
+
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return GestureDetector(
@@ -47,101 +69,17 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
                   fontFamily: "Nunito",
                   fontWeight: FontWeight.bold),
             ),
-            actions: [
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.only(right: width * 0.05),
-                  child: const Text(
-                    "1/4",
-                    style: TextStyle(
-                        color: CustomColor.blackcolor,
-                        fontSize: 23,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              )
-            ]),
+            actions: []),
         body: SafeArea(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            FutureBuilder<RecievedDetails?>(
-              future: RecieveAPI()
-                  .particularOrders(context: context, domain: widget.barcode),
-              builder: (context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  return Padding(
-                    padding:
-                        EdgeInsets.only(top: height * 0.04, left: width * 0.06),
-                    child: Container(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "Order No :",
-                                  style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                Text(
-                                  snapshot.data!.displayName,
-                                  style: const TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: height * 0.03,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: height * 0.01),
-                              child: Row(
-                                children: [
-                                  const Text(
-                                    "Sender    :",
-                                    style: TextStyle(
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      snapshot.data!.companyName,
-                                      style: const TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ]),
-                    ),
-                  );
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(color: CustomColor.yellow),
-                  );
-                }
-              },
-            ),
-            const Divider(
-              thickness: 3,
-              color: CustomColor.yellow,
-            ),
             SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   InkWell(
-                    onTap: () {
-                      setState(() {});
-                    },
+                    onTap: () {},
                     child: Container(
                       padding: const EdgeInsets.all(13),
                       margin: const EdgeInsets.all(10),
@@ -152,39 +90,39 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: width * 0.03),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.value.productId,
-                                  style: const TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: CustomColor.blackcolor2),
-                                ),
-                                SizedBox(
-                                  height: height * 0.03,
-                                ),
-                                Container(
-                                  height: height * 0.07,
-                                  width: width * 0.55,
-                                  child: Text(
-                                    widget.value.productName,
-                                    textAlign: TextAlign.justify,
+                          Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: EdgeInsets.only(left: width * 0.03),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.value.productId,
                                     style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
                                         color: CustomColor.blackcolor2),
                                   ),
-                                ),
-                              ],
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: height * 0.04,
+                                    ),
+                                    child: Text(
+                                      widget.value.productName,
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.fade,
+                                      style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
+                                          color: CustomColor.blackcolor2),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                          SizedBox(
-                            width: width * 0.01,
-                          ),
+
                           // Expanded(
                           //   flex: 17,
                           //   child: Container(
@@ -208,51 +146,67 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
                           //     ),
                           //   ),
                           // ),
+                          // SizedBox(
+                          //   width: width * 0.2,
+                          // ),
+                          Expanded(
+                            flex: 1,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      quantityController!.text,
+                                      style: const TextStyle(
+                                          color: CustomColor.blackcolor2,
+                                          fontSize: 23,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "/${widget.value.productOnQty}",
+                                      style: const TextStyle(
+                                          color: CustomColor.blackcolor2,
+                                          fontSize: 23,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: height * 0.01,
+                                ),
+                                const Text(
+                                  "PCS",
+                                  style: TextStyle(
+                                      color: CustomColor.blackcolor2,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500),
+                                )
+                              ],
+                            ),
+                          ),
                           SizedBox(
-                            width: width * 0.06,
+                            width: width * 0.03,
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    quantityController.text,
-                                    style: const TextStyle(
-                                        color: CustomColor.blackcolor2,
-                                        fontSize: 23,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    "/${widget.value.productOnQty}",
-                                    style: const TextStyle(
-                                        color: CustomColor.blackcolor2,
-                                        fontSize: 23,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: height * 0.01,
-                              ),
-                              const Text(
-                                "PCS",
-                                style: TextStyle(
-                                    color: CustomColor.blackcolor2,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            width: width * 0.02,
-                          ),
+
                           Container(
                             height: height * 0.015,
                             width: width * 0.05,
                             decoration: BoxDecoration(
-                                color: CustomColor.yellow,
+                                color: int.parse(widget.value.quantityDone) == 0
+                                    ? CustomColor.yellow
+                                    : int.parse(widget.value.quantityDone) <
+                                            int.parse(widget.value.productOnQty)
+                                        ? CustomColor.orangecolor
+                                        : int.parse(widget
+                                                    .value.quantityDone) ==
+                                                int.parse(
+                                                    widget.value.productOnQty)
+                                            ? CustomColor.greencolor
+                                            : CustomColor.yellow,
                                 borderRadius: BorderRadius.circular(3)),
                           )
                         ],
@@ -323,9 +277,49 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
                                   horizontal: width * 0.05,
                                   vertical: height * 0.02),
                               child: TextField(
+                                decoration: InputDecoration(
+                                  // helperText:
+                                  //     widget.value.productOnQty.toString(),
+                                  hintText:
+                                      widget.value.productOnQty.toString(),
+                                  // labelText:
+                                  //     widget.value.productOnQty.toString(),
+                                ),
                                 controller: quantityController,
                                 autofocus: true,
                                 keyboardType: TextInputType.number,
+                                onSubmitted: (e) {
+                                  setState(() {
+                                    if (int.parse(quantityController!.text) <=
+                                        int.parse(widget.value.productOnQty)) {
+                                      print(
+                                          "lengthQty--> ${int.parse(widget.value.quantityDone)}");
+                                      print(
+                                          "lengthDone--> ${int.parse(widget.value.productOnQty)}");
+
+                                      RecieveAPI().orderLineQuantity(
+                                          quantity: e,
+                                          productId: widget.value.productId,
+                                          userid:
+                                              widget.value.userid.toString(),
+                                          context: context);
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  OrdersLinePage1(
+                                                      barcode:
+                                                          widget.barcode)));
+                                      RecieveAPI().orderLine(
+                                          context: context,
+                                          domain: widget.barcode);
+                                    } else {
+                                      globalAlertBox.topAlertBox(
+                                          context: context,
+                                          text: "Enter Valid Details");
+                                    }
+                                  });
+                                },
                               ),
                             ),
                             Column(
@@ -345,13 +339,6 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
                                 ),
                               ],
                             ),
-                            // const Text(
-                            //   "registration",
-                            //   style: TextStyle(
-                            //       color: CustomColor.grayword,
-                            //       fontSize: 22,
-                            //       fontWeight: FontWeight.w500),
-                            // ),
                           ]),
                     ),
                   ),
@@ -361,11 +348,6 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
           ]),
         ),
         backgroundColor: CustomColor.backgroundColor,
-        floatingActionButton: BottomWidgets(
-          width: width,
-          height: height,
-          barcode: widget.barcode,
-        ),
       ),
     );
   }

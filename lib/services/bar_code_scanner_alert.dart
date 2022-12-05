@@ -1,40 +1,20 @@
-import 'dart:ffi';
-
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
-import 'package:wearhouse/const/color.dart';
-import 'package:barcode_scan2/barcode_scan2.dart';
-import 'package:audioplayers/audioplayers.dart';
-import 'package:wearhouse/models/orders_line_model.dart';
-import 'package:wearhouse/screens/receive_orders_line.dart';
-import 'package:wearhouse/screens/received_order_line2.dart';
-import 'package:wearhouse/screens/recieved_orders_select.dart';
-import 'package:wearhouse/services/api/recive_api.dart';
 
-class BarcodeScannerPage extends StatefulWidget {
-  BarcodeScannerPage({
-    super.key,
-  });
+import '../const/color.dart';
+import 'api/recive_api.dart';
+
+class AlertBarcodeScanner extends StatefulWidget {
+  final String barcode;
+  const AlertBarcodeScanner({super.key, required this.barcode});
 
   @override
-  State<BarcodeScannerPage> createState() => _BarcodeScannerPageState();
+  State<AlertBarcodeScanner> createState() => _AlertBarcodeScannerState();
 }
 
-String _val = "";
-
-String get val {
-  if (_val == "") {
-    _val = "Not yet updated";
-    return _val;
-  } else {
-    return _val;
-  }
-}
-
-bool isLoade = false;
-
-class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
+class _AlertBarcodeScannerState extends State<AlertBarcodeScanner> {
   MobileScannerController cameraController = MobileScannerController();
   bool _screenOpened = false;
   // bool torch = false;
@@ -42,13 +22,6 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
   bool isturnon = false;
 
   final player = AudioPlayer();
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    cameraController.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,55 +106,16 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
   }
 
   Future<void> _getQRcode(Barcode qrCode, MobileScannerArguments? args) async {
-    // TorchState val = cameraController.torchState as TorchState;
+    TorchState val = cameraController.torchState as TorchState;
 
     final users = Provider.of<RecieveAPI>(context, listen: false);
 
     if (!_screenOpened) {
       String code = qrCode.rawValue.toString().trim();
       AudioPlayer().play(AssetSource("audio/scanner.mp3"));
-      print("QRcode Fount -->$code");
 
-      // Navigator.pop(context);
-      Navigator.pop(context);
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => OrdersSelectPage(barcode: code)));
-
-      users.particularOrders(context: context, domain: code);
-
-      // Navigator.pop(context);
       _screenOpened = true;
       cameraController.dispose();
     }
-
-    //showDialog is used for previously get the code info from Qrcode now it's not needed
-
-    // showDialog(
-    //     context: context,
-    //     builder: (BuildContext? context) {
-    //       return AlertDialog(
-    //         title: Text("QR Code"),
-    //         content: Text(code),
-    //         actions: [
-    //           TextButton(
-    //               onPressed: () {
-    //                 // RecieveAPI()
-    //                 //     .particularOrders(context: context!, domain: code);
-    //                 Navigator.pop(context!);
-
-    //                 Navigator.pop(context);
-    //                 Navigator.push(
-    //                     context,
-    //                     MaterialPageRoute(
-    //                         builder: (context) => OrdersSelectPage()));
-
-    //                 cameraController.dispose();
-    //               },
-    //               child: Text("OK"))
-    //         ],
-    //       );
-    //     });
   }
 }

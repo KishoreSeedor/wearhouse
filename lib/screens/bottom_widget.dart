@@ -3,6 +3,7 @@ import 'package:wearhouse/screens/recieved_orders_select.dart';
 
 import '../const/color.dart';
 import '../services/bar_code_scaner.dart';
+import 'home_page.dart';
 
 class BottomWidgets extends StatelessWidget {
   BottomWidgets({
@@ -49,7 +50,10 @@ class BottomWidgets extends StatelessWidget {
         ),
         FloatingActionButton(
           heroTag: null,
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const MyHomePage()));
+          },
           backgroundColor: CustomColor.darkwhite,
           foregroundColor: Colors.black,
           child: Column(
@@ -73,3 +77,4 @@ class BottomWidgets extends StatelessWidget {
     );
   }
 }
+// static const darkword = Color.fromARGB(255, 123, 123, 123);

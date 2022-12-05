@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:wearhouse/models/orders_line_model.dart';
 import 'package:wearhouse/models/recived_details_model.dart';
-import 'package:wearhouse/screens/bottom_widget.dart';
+import 'package:wearhouse/screens/home_page.dart';
+import 'package:wearhouse/services/alert_box.dart';
 import 'package:wearhouse/services/api/recive_api.dart';
-import 'package:wearhouse/services/bar_code_scaner.dart';
 import 'package:wearhouse/services/barcode_scanner2.dart';
-
 import '../const/color.dart';
 import 'received_order_line2.dart';
 
@@ -22,27 +20,28 @@ class OrdersLinePage1 extends StatefulWidget {
 }
 
 class _OrdersLinePage1State extends State<OrdersLinePage1> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-  //     Provider.of<RecieveAPI>(context, listen: false)
-  //         .particularOrders(context: context, domain: widget.barcode);
-  //   });
-  // }
+  List<RecieveAPI> stopCall = [];
+  late Future<List<OrderLine>> quantity;
+  late Future<List<OrderLine>>? filder;
+  late Future<RecievedDetails?> particular;
 
-  // bool isVisible = true;
+  @override
+  void initState() {
+    stopCall;
+
+    particular =
+        RecieveAPI().particularOrders(context: context, domain: widget.barcode);
+    filder = Provider.of<RecieveAPI>(context, listen: false)
+        .orderLine(context: context, domain: widget.barcode);
+    quantity = RecieveAPI().orderLine(context: context, domain: widget.barcode);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     // var data = true;
 
-    TextEditingController _value = TextEditingController();
-
-    final orders = Provider.of<RecieveAPI>(context, listen: false);
-
-    final detail = Provider.of<RecieveAPI>(context, listen: false)
-        .particularOrders(context: context, domain: widget.barcode);
+    List<int> quantityChecker = [];
 
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
@@ -72,32 +71,55 @@ class _OrdersLinePage1State extends State<OrdersLinePage1> {
                   fontWeight: FontWeight.bold),
             ),
             actions: [
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.only(right: width * 0.05),
-                  child: const Text(
-                    "1/4",
-                    style: TextStyle(
-                        color: CustomColor.blackcolor,
-                        fontSize: 23,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              )
+              FutureBuilder<List<OrderLine>>(
+                  future: Provider.of<RecieveAPI>(context, listen: false)
+                      .orderLine(context: context, domain: widget.barcode),
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return Container();
+                      case ConnectionState.done:
+                      default:
+                        if (snapshot.hasData) {
+                          print(
+                              "row length--> ${int.parse(snapshot.data!.length.toString()).toString()}");
+                          return Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(right: width * 0.05),
+                              child: Row(
+                                // ignore: prefer_const_literals_to_create_immutables
+                                children: [
+                                  // ignore: unrelated_type_equality_checks
+
+                                  Text(
+                                    int.parse(quantityChecker.length.toString())
+                                        .toString(),
+                                    style: const TextStyle(
+                                        color: CustomColor.blackcolor,
+                                        fontSize: 23,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    "/${int.parse(snapshot.data!.length.toString()).toString()}",
+                                    style: TextStyle(
+                                        color: CustomColor.blackcolor,
+                                        fontSize: 23,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Container();
+                        }
+                    }
+                  })
             ]),
         body: FutureBuilder<RecievedDetails?>(
-            future: RecieveAPI()
-                .particularOrders(context: context, domain: widget.barcode),
+            future: particular,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                // var visible = true;
-                // print(visible);
-                // showInfo() {
-                //   setState(() {
-                //     visible = !visible;
-                //   });
-                // }
-
                 return SafeArea(
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,8 +185,7 @@ class _OrdersLinePage1State extends State<OrdersLinePage1> {
                         ),
                         Expanded(
                           child: FutureBuilder<List<OrderLine>>(
-                              future: orders.orderLine(
-                                  context: context, domain: widget.barcode),
+                              future: quantity,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
                                   globalorderLine = snapshot.data!;
@@ -174,18 +195,33 @@ class _OrdersLinePage1State extends State<OrdersLinePage1> {
                                     shrinkWrap: true,
                                     itemBuilder: (context, index) {
                                       print(snapshot.data!.length);
-                                      print(globalorderLine);
+                                      print(
+                                          "global orderline + $globalorderLine");
+                                      print(
+                                          "quantityDone+ ${snapshot.data![index].quantityDone.toString()}");
+                                      print(
+                                          "productonquantity + ${snapshot.data![index].productOnQty.toString()}");
 
+                                      if (snapshot.data![index].quantityDone
+                                              .toString() ==
+                                          snapshot.data![index].productOnQty
+                                              .toString()) {
+                                        quantityChecker += [1];
+                                      }
+                                      // }
+                                      print(
+                                          "quantityChecker + ${int.parse(quantityChecker.length.toString()).toString()}");
                                       return Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          InkWell(
+                                          GestureDetector(
                                             onTap: () {
+                                              // Navigator.pop(context);
                                               setState(() {
-                                                Navigator.push(
+                                                Navigator.pushReplacement(
                                                   context,
                                                   MaterialPageRoute(
                                                     builder: (context) =>
@@ -199,7 +235,7 @@ class _OrdersLinePage1State extends State<OrdersLinePage1> {
                                               });
                                             },
                                             child: Container(
-                                              padding: const EdgeInsets.all(13),
+                                              padding: const EdgeInsets.all(17),
                                               margin: const EdgeInsets.all(10),
                                               decoration: BoxDecoration(
                                                 borderRadius:
@@ -210,52 +246,58 @@ class _OrdersLinePage1State extends State<OrdersLinePage1> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: width * 0.03),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          snapshot.data![index]
-                                                              .productId,
-                                                          style: const TextStyle(
-                                                              fontSize: 24,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color: CustomColor
-                                                                  .blackcolor2),
-                                                        ),
-                                                        SizedBox(
-                                                          height: height * 0.03,
-                                                        ),
-                                                        Container(
-                                                          height: height * 0.07,
-                                                          width: width * 0.55,
-                                                          child: Text(
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: width * 0.03),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
                                                             snapshot
                                                                 .data![index]
-                                                                .productName,
-                                                            textAlign: TextAlign
-                                                                .justify,
+                                                                .productId,
                                                             style: const TextStyle(
-                                                                fontSize: 18,
+                                                                fontSize: 24,
                                                                 fontWeight:
                                                                     FontWeight
-                                                                        .w500,
+                                                                        .bold,
                                                                 color: CustomColor
                                                                     .blackcolor2),
                                                           ),
-                                                        ),
-                                                      ],
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                              vertical:
+                                                                  height * 0.04,
+                                                            ),
+                                                            child: Text(
+                                                              snapshot
+                                                                  .data![index]
+                                                                  .productName,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .fade,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .start,
+                                                              style: const TextStyle(
+                                                                  fontSize: 15,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: CustomColor
+                                                                      .blackcolor2),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
-                                                  SizedBox(
-                                                    width: width * 0.01,
-                                                  ),
+
                                                   // Expanded(
                                                   //   flex: 17,
                                                   //   child: Container(
@@ -279,64 +321,95 @@ class _OrdersLinePage1State extends State<OrdersLinePage1> {
                                                   //     ),
                                                   //   ),
                                                   // ),
-                                                  SizedBox(
-                                                    width: width * 0.06,
+                                                  // SizedBox(
+                                                  //   width: width * 0.2,
+                                                  // ),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .end,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .end,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
+                                                          children: [
+                                                            Text(
+                                                              snapshot
+                                                                  .data![index]
+                                                                  .quantityDone,
+                                                              style: const TextStyle(
+                                                                  color: CustomColor
+                                                                      .blackcolor2,
+                                                                  fontSize: 23,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                            Text(
+                                                              "/${snapshot.data![index].productOnQty}",
+                                                              style: const TextStyle(
+                                                                  color: CustomColor
+                                                                      .blackcolor2,
+                                                                  fontSize: 23,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: height * 0.02,
+                                                        ),
+                                                        const Text(
+                                                          "PCS",
+                                                          style: TextStyle(
+                                                              color: CustomColor
+                                                                  .blackcolor2,
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500),
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                            _value.text,
-                                                            style: const TextStyle(
-                                                                color: CustomColor
-                                                                    .blackcolor2,
-                                                                fontSize: 23,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                          Text(
-                                                            "/${snapshot.data![index].productOnQty}",
-                                                            style: const TextStyle(
-                                                                color: CustomColor
-                                                                    .blackcolor2,
-                                                                fontSize: 23,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        height: height * 0.01,
-                                                      ),
-                                                      const Text(
-                                                        "PCS",
-                                                        style: TextStyle(
-                                                            color: CustomColor
-                                                                .blackcolor2,
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w500),
-                                                      )
-                                                    ],
-                                                  ),
                                                   SizedBox(
-                                                    width: width * 0.02,
+                                                    width: width * 0.03,
                                                   ),
                                                   Container(
                                                     height: height * 0.015,
                                                     width: width * 0.05,
                                                     decoration: BoxDecoration(
-                                                        color:
-                                                            CustomColor.yellow,
+                                                        color: int.parse(snapshot
+                                                                    .data![
+                                                                        index]
+                                                                    .quantityDone) ==
+                                                                0
+                                                            ? CustomColor.yellow
+                                                            : int.parse(snapshot.data![index].quantityDone) <
+                                                                    int.parse(snapshot
+                                                                        .data![
+                                                                            index]
+                                                                        .productOnQty)
+                                                                ? CustomColor
+                                                                    .orangecolor
+                                                                : int.parse(snapshot.data![index].quantityDone) ==
+                                                                        int.parse(snapshot
+                                                                            .data![
+                                                                                index]
+                                                                            .productOnQty)
+                                                                    ? CustomColor
+                                                                        .greencolor
+                                                                    : CustomColor
+                                                                        .yellow,
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(3)),
@@ -365,107 +438,6 @@ class _OrdersLinePage1State extends State<OrdersLinePage1> {
                                 }
                               }),
                         ),
-                        // SingleChildScrollView(
-                        //   child: Container(
-                        //     clipBehavior: Clip.hardEdge,
-                        //     margin: const EdgeInsets.all(10),
-                        //     // margin: EdgeInsets.symmetric(horizontal: width * 0.002),
-                        //     height: height * 0.54,
-                        //     decoration: BoxDecoration(
-                        //         borderRadius: BorderRadius.circular(20),
-                        //         color: CustomColor.white,
-                        //         boxShadow: [
-                        //           BoxShadow(
-                        //             color: Colors.black.withOpacity(0.3),
-                        //             spreadRadius: 5,
-                        //             blurRadius: 7,
-                        //             offset: const Offset(0, 3),
-                        //           )
-                        //         ]),
-
-                        //     child: Column(
-                        //         crossAxisAlignment: CrossAxisAlignment.center,
-                        //         children: [
-                        //           Container(
-                        //             height: height * 0.06,
-                        //             width: width,
-
-                        //             // ignore: sort_child_properties_last
-                        //             child: Row(
-                        //               mainAxisAlignment:
-                        //                   MainAxisAlignment.center,
-                        //               crossAxisAlignment:
-                        //                   CrossAxisAlignment.center,
-                        //               children: [
-                        //                 Padding(
-                        //                   padding: EdgeInsets.only(
-                        //                       top: height * 0.01,
-                        //                       left: width * 0.05),
-                        //                   child: const Text(
-                        //                     "Enter Quantity",
-                        //                     style: TextStyle(
-                        //                         fontSize: 28,
-                        //                         fontWeight: FontWeight.w500),
-                        //                   ),
-                        //                 ),
-                        //                 const Expanded(
-                        //                   flex: 8,
-                        //                   child: Text(""),
-                        //                 ),
-                        //                 IconButton(
-                        //                   onPressed: () {
-                        //                     snapshot.data!.isVisible;
-                        //                   },
-                        //                   icon: Padding(
-                        //                     padding:
-                        //                         EdgeInsets.all(height * 0.004),
-                        //                     child: Image.asset(
-                        //                         "assets/images/close.png"),
-                        //                   ),
-                        //                 ),
-                        //               ],
-                        //             ),
-
-                        //             color: CustomColor.darkwhite,
-                        //           ),
-                        //           Padding(
-                        //             padding: EdgeInsets.symmetric(
-                        //                 horizontal: width * 0.05,
-                        //                 vertical: height * 0.02),
-                        //             child: TextField(
-                        //               controller: _value,
-                        //               autofocus: true,
-                        //               keyboardType: TextInputType.number,
-                        //             ),
-                        //           ),
-                        //           Column(
-                        //             crossAxisAlignment:
-                        //                 CrossAxisAlignment.center,
-                        //             mainAxisAlignment: MainAxisAlignment.center,
-                        //             children: [
-                        //               Container(
-                        //                 width: width * 0.8,
-                        //                 child: const Text(
-                        //                   "Enter the quantity to complete registration",
-                        //                   textAlign: TextAlign.center,
-                        //                   style: TextStyle(
-                        //                       color: CustomColor.grayword,
-                        //                       fontSize: 22,
-                        //                       fontWeight: FontWeight.w500),
-                        //                 ),
-                        //               ),
-                        //             ],
-                        //           ),
-                        //           // const Text(
-                        //           //   "registration",
-                        //           //   style: TextStyle(
-                        //           //       color: CustomColor.grayword,
-                        //           //       fontSize: 22,
-                        //           //       fontWeight: FontWeight.w500),
-                        //           // ),
-                        //         ]),
-                        //   ),
-                        // ),
                       ]),
                 );
               } else {
@@ -484,12 +456,11 @@ class _OrdersLinePage1State extends State<OrdersLinePage1> {
                 child: FloatingActionButton.extended(
                   heroTag: null,
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => BarcodeScanner2(
-                                barcode: widget.barcode,
-                              )),
-                    );
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                BarcodeScanner2(barcode: widget.barcode)));
                   },
                   backgroundColor: CustomColor.yellow,
                   foregroundColor: Colors.black,
@@ -515,12 +486,20 @@ class _OrdersLinePage1State extends State<OrdersLinePage1> {
               foregroundColor: Colors.black,
               child: Column(
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: width * 0.02),
-                    child: Image.asset(
-                      "assets/images/Category.png",
-                      width: width * 0.08,
-                      height: height * 0.05,
+                  InkWell(
+                    onTap: (() {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const MyHomePage()));
+                    }),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: width * 0.02),
+                      child: Image.asset(
+                        "assets/images/Category.png",
+                        width: width * 0.08,
+                        height: height * 0.05,
+                      ),
                     ),
                   ),
                   const Text(
@@ -532,84 +511,7 @@ class _OrdersLinePage1State extends State<OrdersLinePage1> {
             ),
           ],
         ),
-        // floatingActionButton: BarcodeScanner2(
-        //   barcode: widget.barcode,
-        // ))
       ),
-    );
-  }
-}
-
-class BottomWidget2 extends StatelessWidget {
-  const BottomWidget2({
-    super.key,
-    required this.width,
-    required this.height,
-    required this.barcode,
-  });
-
-  final double width;
-  final double height;
-
-  final String barcode;
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: width * 0.09),
-          child: SizedBox(
-            height: height * 0.04,
-            child: FloatingActionButton.extended(
-              heroTag: null,
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => BarcodeScanner2(
-                            barcode: barcode,
-                          )),
-                );
-              },
-              backgroundColor: CustomColor.yellow,
-              foregroundColor: Colors.black,
-              label: Column(
-                children: [
-                  Image.asset(
-                    "assets/images/scanner.png",
-                    width: width * 0.09,
-                    height: height * 0.06,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        SizedBox(
-          width: width * 0.55,
-        ),
-        FloatingActionButton(
-          heroTag: null,
-          onPressed: () {},
-          backgroundColor: CustomColor.darkwhite,
-          foregroundColor: Colors.black,
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(left: width * 0.02),
-                child: Image.asset(
-                  "assets/images/Category.png",
-                  width: width * 0.08,
-                  height: height * 0.05,
-                ),
-              ),
-              const Text(
-                "Menu",
-                style: TextStyle(fontSize: 8),
-              )
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

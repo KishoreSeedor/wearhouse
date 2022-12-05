@@ -4,7 +4,7 @@ class OrderLine {
 
   OrderLine(
       {required this.displayName,
-      required this.id,
+      required this.userid,
       required this.pickingPartnerId,
       required this.pickingPartnerName,
       required this.productId,
@@ -19,7 +19,7 @@ class OrderLine {
   // String countEnter;
   // String visible;
   String displayName;
-  String id;
+  String userid;
   String pickingPartnerId;
   String pickingPartnerName;
   String productId;

@@ -21,10 +21,23 @@ bool _visible = false;
 
 class _ReceiveOrdersState extends State<ReceiveOrders> {
   AudioPlayer audioPlayer = AudioPlayer();
+  late bool hideFilder;
+  late Future<List<RecivedOrdersModel>> orders;
+  @override
+  void initState() {
+    // hideFilder() {
+    //   setState(() {
+    //     _visible = !_visible;
+    //   });
+    // }
+    orders = Provider.of<RecieveAPI>(context, listen: false)
+        .recievedoders(context: context);
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final orders = Provider.of<RecieveAPI>(context, listen: false);
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return GestureDetector(
@@ -238,20 +251,40 @@ class _ReceiveOrdersState extends State<ReceiveOrders> {
                 fontWeight: FontWeight.bold),
           ),
           actions: [
-            IconButton(
-              icon: Image.asset(
-                "assets/images/fillter.png",
-              ),
-              onPressed: () {
-                setState(() {
-                  _visible = !_visible;
-                });
-              },
-            ),
+            FutureBuilder<List<RecivedOrdersModel>>(
+                future: orders,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    print('new length -->${snapshot.data!.length.toString()}');
+                    return Row(
+                      children: [
+                        Text(
+                          snapshot.data!.length.toString(),
+                          style: const TextStyle(
+                              color: CustomColor.blackcolor2,
+                              fontSize: 23,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        IconButton(
+                          icon: Image.asset(
+                            "assets/images/fillter.png",
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _visible = !_visible;
+                            });
+                          },
+                        ),
+                      ],
+                    );
+                  } else {
+                    return Container();
+                  }
+                })
           ],
         ),
         body: FutureBuilder<List<RecivedOrdersModel>>(
-          future: orders.recievedoders(context: context),
+          future: orders,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               debugPrint('${snapshot.data!.length}hello hello');

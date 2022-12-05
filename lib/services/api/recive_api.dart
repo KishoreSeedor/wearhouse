@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as https;
-import 'package:wearhouse/const/config.dart';
 import 'package:wearhouse/models/orders_line_model.dart';
 import 'package:wearhouse/provider/login_details.provider.dart';
 import 'package:wearhouse/provider/recive_orders_provider.dart';
+import 'package:wearhouse/screens/receive_orders_line.dart';
+import 'package:wearhouse/services/snackbar.dart';
 
 import '../../models/recived_details_model.dart';
 import '../../models/reciveorders_model.dart';
@@ -14,6 +15,14 @@ import '../../models/reciveorders_model.dart';
 //This is the Recive orders page API derived page
 //Dio was used for get api details.
 class RecieveAPI with ChangeNotifier {
+  GlobalSnackbar globalSnackBar = GlobalSnackbar();
+
+  List<String> _updateProd = [];
+
+  List<String> get updateProd {
+    return _updateProd;
+  }
+
   bool _isLoading = false;
   bool get isLoading {
     if (_isLoading == "") {
@@ -41,12 +50,13 @@ class RecieveAPI with ChangeNotifier {
 
   List<RecivedOrdersModel> get rec {
     // ignore: unrelated_type_equality_checks
-    if (_rec == "") {
-      _rec = "Not yet updated" as List<RecivedOrdersModel>;
-      return _rec;
-    } else {
-      return _rec;
-    }
+    return _rec;
+    // if (_rec == "") {
+    //   _rec = "Not yet updated" as List<RecivedOrdersModel>;
+
+    // } else {
+    //   return _rec;
+    // }
   }
 
   RecievedDetails? get par {
@@ -60,13 +70,13 @@ class RecieveAPI with ChangeNotifier {
   }
 
   List<OrderLine> get ord {
-    if (_ord == "") {
-      _ord = "Not yet updated" as List<OrderLine>;
-      return _ord;
-      notifyListeners();
-    } else {
-      return _ord;
-    }
+    return _ord;
+    // if (_ord == "") {
+    //   _ord = "Not yet updated" as List<OrderLine>;
+    //   return _ord;
+    // } else {
+    //   return _ord;
+    // }
   }
 
   Future<List<RecivedOrdersModel>> recievedoders(
@@ -114,10 +124,10 @@ class RecieveAPI with ChangeNotifier {
         print(rec.length.toString() + "---> fav data length");
         _isLoading = false;
         print('NNNNNN' + getOrders.toString());
-        notifyListeners();
+        // notifyListeners();
       } else {
         _isLoading = false;
-        notifyListeners();
+        // notifyListeners();
 
         print(response.reasonPhrase);
       }
@@ -171,15 +181,15 @@ class RecieveAPI with ChangeNotifier {
         // print(getDetails.id);
 
         _par = getDetails;
-        notifyListeners();
+        // notifyListeners();
         print(par);
 
         print(rec.length.toString() + "---> fav data length");
-        _isLoading = false;
+        // _isLoading = false;
         print('SSSSSS' + getDetails.toString());
       } else {
         _isLoading = false;
-        notifyListeners();
+        // notifyListeners();
 
         print(response.reasonPhrase);
       }
@@ -216,36 +226,95 @@ class RecieveAPI with ChangeNotifier {
       https.Response response =
           await https.get(Uri.parse(url), headers: headers);
       var jsonData = json.decode(response.body);
+
       if (response.statusCode == 200) {
         for (var i = 0; i < jsonData.length; i++) {
           getDetails.add(OrderLine(
-            pickingId: jsonData[i]['picking_id'][0].toString(),
-            pickingName: jsonData[i]['picking_id'][1].toString(),
-            displayName: jsonData[i]['display_name'].toString(),
-            id: jsonData[i]['id'].toString(),
-            pickingPartnerId: jsonData[i]['picking_partner_id'][0].toString(),
-            pickingPartnerName: jsonData[i]['picking_partner_id'][1].toString(),
-            productId: jsonData[i]['product_id'][0].toString(),
-            productName: jsonData[i]['product_id'][1].toString(),
-            productOnQty: jsonData[i]['product_uom_qty'].toString(),
-            quantityDone: jsonData[i]['quantity_done'].toString(),
-          ));
-
-          _ord = getDetails;
-          notifyListeners();
-          print(par);
-
-          print(rec.length.toString() + "---> fav data length");
-          _isLoading = false;
-          print('OOOOOOO' + getDetails.toString());
-          notifyListeners();
-
-          print(response.reasonPhrase);
+              pickingId: jsonData[i]['picking_id'][0].toString(),
+              pickingName: jsonData[i]['picking_id'][1].toString(),
+              displayName: jsonData[i]['display_name'].toString(),
+              userid: jsonData[i]['id'].toString(),
+              pickingPartnerId: jsonData[i]['picking_partner_id'][0].toString(),
+              pickingPartnerName:
+                  jsonData[i]['picking_partner_id'][1].toString(),
+              productId: jsonData[i]['product_id'][0].toString(),
+              productName: jsonData[i]['product_id'][1].toString(),
+              productOnQty:
+                  double.parse(jsonData[i]['product_uom_qty'].toString())
+                      .floor()
+                      .toString(),
+              quantityDone:
+                  double.parse(jsonData[i]['quantity_done'].toString())
+                      .floor()
+                      .toString()));
         }
-      } else {}
+        _ord = getDetails;
+        // notifyListeners();
+        print(ord);
+
+        print(_ord.length.toString() + "---> fav orderline length");
+
+        print('OOOOOOO' + getDetails.toString());
+        // notifyListeners();
+
+        print("${response.reasonPhrase} + order line response");
+      } else {
+        _isLoading = false;
+      }
     } on HttpException catch (e) {
       print(e);
     }
     return _ord;
+  }
+
+  Future<void> orderLineQuantity(
+      {required String quantity,
+      required String userid,
+      required String productId,
+      required BuildContext context}) async {
+    _isLoading = true;
+
+    var user = Provider.of<UserDetails>(context, listen: false);
+
+    await user.getAllDetails();
+
+    var header = {
+      'Cookie':
+          'session_id=8a47612539d2b93909330392d4b6369f5d83dfa9; session_id=11f5121f566165d27cf73b9a28432ad6d0b3597b'
+    };
+
+    String clainedId = user.clientID;
+    print("original id -->$userid");
+    var url =
+        'http://eiuat.seedors.com:8290/seedor-api/warehouse/update-recived/$userid?clientid=$clainedId&quantity=$quantity';
+
+    print(
+        'url order line quantity -->http://eiuat.seedors.com:8290/seedor-api/warehouse/update-recived/$userid?clientid=$clainedId&quantity=$quantity');
+
+    try {
+      https.Response response =
+          await https.put(Uri.parse(url), headers: header);
+      var jsonData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        _updateProd.add(productId);
+
+        print(_updateProd.length.toString() + "updateProd");
+
+        print(response.body);
+
+        _isLoading = false;
+
+        await RecieveAPI().orderLine(context: context, domain: userid);
+
+        // Navigator.pop(context);
+        print(
+            "2nd Api --> ${RecieveAPI().orderLine(context: context, domain: domain)}");
+        await globalSnackBar.successsnackbar(context: context, text: "Updated");
+      } else {
+        await globalSnackBar.successsnackbar(context: context, text: "failed");
+      }
+    } on HttpException catch (e) {
+      print(e);
+    }
   }
 }
