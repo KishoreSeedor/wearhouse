@@ -1,31 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:wearhouse/screens/receive_orders_line.dart';
-import 'package:wearhouse/screens/receive_page.dart';
-import 'package:wearhouse/services/api/recive_api.dart';
-import '../const/color.dart';
-import '../models/recived_details_model.dart';
-import 'received_page_container.dart';
+import 'package:wearhouse/screens/PutAway/bottom_widget2.dart';
+import 'package:wearhouse/screens/PutAway/put_away_orders_line.dart';
 
-class OrdersSelectPage extends StatefulWidget {
-  final String barcode;
-  const OrdersSelectPage({super.key, required this.barcode});
+import '../../const/color.dart';
+import '../Receive/received_page_container.dart';
 
-  static const routename = "orders_page";
+class PutAwayOrdersSelect extends StatefulWidget {
+  const PutAwayOrdersSelect({super.key});
 
   @override
-  State<OrdersSelectPage> createState() => _OrdersSelectPageState();
+  State<PutAwayOrdersSelect> createState() => _PutAwayOrdersSelectState();
 }
 
 bool _visible = false;
 
-class _OrdersSelectPageState extends State<OrdersSelectPage> {
+class _PutAwayOrdersSelectState extends State<PutAwayOrdersSelect> {
+  String? barcode;
   @override
   Widget build(BuildContext context) {
-    // user provider is now not used in this page
-    // final user = Provider.of<RecieveAPI>(context, listen: false);
-    // final users = user.par;
-
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -221,13 +213,13 @@ class _OrdersSelectPageState extends State<OrdersSelectPage> {
           padding: const EdgeInsets.only(left: 10),
           child: IconButton(
             icon: Image.asset(
-              "assets/images/recivedbox.png",
+              "assets/images/putawaylogo.png",
             ),
             onPressed: () {},
           ),
         ),
         title: const Text(
-          "Receive Orders",
+          "Put Away Orders",
           style: TextStyle(
               fontSize: 22,
               color: Colors.black,
@@ -247,97 +239,80 @@ class _OrdersSelectPageState extends State<OrdersSelectPage> {
           ),
         ],
       ),
-      body: FutureBuilder<RecievedDetails?>(
-          future: RecieveAPI()
-              .particularOrders(context: context, domain: widget.barcode),
-          builder: (context, snapshot) {
-            debugPrint("new Value --> ${snapshot.data}");
-            if (snapshot.hasData) {
-              print('${snapshot.data!}hellos hellos');
-              return SafeArea(
-                child: Column(
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                  top: height * 0.04,
+                  bottom: height * 0.02,
+                  left: width * 0.04),
+              child: SizedBox(
+                height: height * 0.06,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.only(
-                          top: height * 0.04,
-                          bottom: height * 0.02,
-                          left: width * 0.04),
-                      child: SizedBox(
-                        height: height * 0.06,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Image.asset("assets/images/Barcode2.png"),
-                            SizedBox(
-                              width: width * 0.03,
-                            ),
-                            Expanded(
-                              flex: 4,
-                              child: Text(
-                                snapshot.data!.id.toString(),
-                                style: const TextStyle(
-                                    fontSize: 23, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            SizedBox(
-                              width: width * 0.2,
-                            ),
-                            Expanded(
-                              flex: 5,
-                              child: IconButton(
-                                  onPressed: () {},
-                                  icon: Padding(
-                                    padding: EdgeInsets.all(height * 0.004),
-                                    child:
-                                        Image.asset("assets/images/close.png"),
-                                  )),
-                            )
-                          ],
-                        ),
+                    Image.asset("assets/images/Barcode2.png"),
+                    SizedBox(
+                      width: width * 0.03,
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Text(
+                        "1145",
+                        style: const TextStyle(
+                            fontSize: 23, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    const Divider(
-                      thickness: 3,
-                      color: CustomColor.yellow,
+                    SizedBox(
+                      width: width * 0.2,
                     ),
-                    Container(
-                      padding: const EdgeInsets.all(18),
-                      margin: const EdgeInsets.all(9),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: CustomColor.lightPink,
-                      ),
-                      child: ReceivedContainer(
-                        onTap: () {
-                          setState(() {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => OrdersLinePage1(
-                                        barcode: widget.barcode)));
-                            _visible = false;
-                          });
-                        },
-                        companyName: snapshot.data!.companyName,
-                        createDate: snapshot.data!.createDate.toString(),
-                        displayName: snapshot.data!.displayName.toString(),
-                        height: height,
-                        origin: snapshot.data!.origin.toString(),
-                        width: width,
-                      ),
-                    ),
+                    Expanded(
+                      flex: 5,
+                      child: IconButton(
+                          onPressed: () {},
+                          icon: Padding(
+                            padding: EdgeInsets.all(height * 0.004),
+                            child: Image.asset("assets/images/close.png"),
+                          )),
+                    )
                   ],
                 ),
-              );
-            } else {
-              return Center(
-                child: CircularProgressIndicator(
-                  color: CustomColor.yellow,
-                ),
-              );
-            }
-          }),
+              ),
+            ),
+            const Divider(
+              thickness: 3,
+              color: CustomColor.yellow,
+            ),
+            Container(
+              padding: const EdgeInsets.all(18),
+              margin: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: CustomColor.lightPink,
+              ),
+              child: ReceivedContainer(
+                onTap: () {
+                  setState(() {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const PutAwayOrdersLine()));
+                    _visible = false;
+                  });
+                },
+                height: height,
+                width: width,
+                companyName: "Kishore",
+                createDate: "11.11.22",
+                origin: "India",
+                displayName: "Kishore",
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

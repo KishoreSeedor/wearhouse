@@ -11,6 +11,7 @@ class RecievedDetails {
     required this.scheduledDate,
     required this.transportDate,
     required this.isVisible,
+    required this.skuId,
     // required  visible,
   });
 
@@ -25,4 +26,5 @@ class RecievedDetails {
   String companyName;
   String scheduledDate;
   String transportDate;
+  String skuId;
 }

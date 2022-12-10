@@ -10,6 +10,7 @@ class RecivedOrdersModel {
     required this.companyName,
     required this.scheduledDate,
     required this.transportDate,
+    required this.skuId,
   });
 
   String barcode;
@@ -22,6 +23,7 @@ class RecivedOrdersModel {
   String companyName;
   String scheduledDate;
   String transportDate;
+  String skuId;
 
   // factory RecivedOrdersModel.fromJson(Map<String, dynamic> json) =>
   //     RecivedOrdersModel(

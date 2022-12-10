@@ -38,6 +38,17 @@ class UserDetails with ChangeNotifier {
     }
   }
 
+  String _id = "";
+
+  String get id {
+    if (_id == "") {
+      _id = "Not yet updated";
+      return _id;
+    } else {
+      return _id;
+    }
+  }
+
   Future<void> getAllDetails() async {
     final prefs = await SharedPreferences.getInstance();
     _client_id = prefs.getString('clientid') ?? "Not yet updated";
@@ -45,6 +56,7 @@ class UserDetails with ChangeNotifier {
     _email = prefs.getString('email') ?? "Not yet updated";
 
     _name = prefs.getString('name') ?? 'Not yet updated';
+    _id = prefs.getString('id') ?? 'Not yet updeated';
     notifyListeners();
   }
 }

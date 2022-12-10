@@ -13,7 +13,8 @@ class AlertTest extends StatelessWidget {
         Center(
           child: TextButton(
               onPressed: () {
-                GlobalAlertBox().successBox(context: context);
+                // GlobalAlertBox().qualityChecker(
+                //     context: context, barcode: barcode, userId: '');
               },
               child: Text("Enter")),
         )
@@ -22,3 +23,4 @@ class AlertTest extends StatelessWidget {
     );
   }
 }
+// qualityChecker(context: context, barcode: barcode);

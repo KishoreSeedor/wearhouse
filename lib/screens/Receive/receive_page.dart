@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wearhouse/const/color.dart';
 import 'package:wearhouse/models/reciveorders_model.dart';
-import 'package:wearhouse/screens/recieved_orders_select.dart';
+
 import 'package:wearhouse/services/api/recive_api.dart';
-import 'bottom_widget.dart';
+
+import '../bottom_widget.dart';
 import 'received_page_container.dart';
+import 'recieved_orders_select.dart';
 
 class ReceiveOrders extends StatefulWidget {
   final String barcode;
@@ -25,11 +27,6 @@ class _ReceiveOrdersState extends State<ReceiveOrders> {
   late Future<List<RecivedOrdersModel>> orders;
   @override
   void initState() {
-    // hideFilder() {
-    //   setState(() {
-    //     _visible = !_visible;
-    //   });
-    // }
     orders = Provider.of<RecieveAPI>(context, listen: false)
         .recievedoders(context: context);
 
@@ -287,7 +284,16 @@ class _ReceiveOrdersState extends State<ReceiveOrders> {
           future: orders,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              debugPrint('${snapshot.data!.length}hello hello');
+              if (snapshot.data!.isEmpty) {
+                return Center(
+                  child: Text(
+                    "No Recived Orders",
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                );
+              }
               return ListView.separated(
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,

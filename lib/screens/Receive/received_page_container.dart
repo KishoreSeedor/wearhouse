@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../const/color.dart';
+import '../../const/color.dart';
 
 class ReceivedContainer extends StatefulWidget {
   const ReceivedContainer({

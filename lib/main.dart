@@ -4,12 +4,8 @@ import 'package:wearhouse/provider/login_auth_provider.dart';
 import 'package:wearhouse/provider/login_details.provider.dart';
 import 'package:wearhouse/provider/recive_orders_provider.dart';
 import 'package:wearhouse/screens/home_page.dart';
-import 'package:wearhouse/screens/receive_orders_line.dart';
-
 import 'package:wearhouse/screens/splashscreen.dart';
 import 'package:wearhouse/services/api/recive_api.dart';
-import 'package:wearhouse/test/alertbox_test.dart';
-
 import 'provider/device_info.dart';
 
 void main() {
@@ -33,6 +29,7 @@ class MyApp extends StatelessWidget {
           value: RecieveAPI(),
         ),
         ChangeNotifierProvider.value(value: ParticularOrders()),
+        ChangeNotifierProvider.value(value: RecieveAPI()),
 
         // ChangeNotifierProvider.value(value: const MyHomePage())
       ],

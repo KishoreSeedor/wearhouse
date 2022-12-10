@@ -7,10 +7,10 @@ import 'package:wearhouse/const/color.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:wearhouse/models/orders_line_model.dart';
-import 'package:wearhouse/screens/receive_orders_line.dart';
-import 'package:wearhouse/screens/received_order_line2.dart';
-import 'package:wearhouse/screens/recieved_orders_select.dart';
+
 import 'package:wearhouse/services/api/recive_api.dart';
+
+import '../screens/Receive/recieved_orders_select.dart';
 
 class BarcodeScannerPage extends StatefulWidget {
   BarcodeScannerPage({

@@ -4,9 +4,11 @@ import 'package:provider/provider.dart';
 
 import 'package:wearhouse/const/color.dart';
 import 'package:wearhouse/provider/login_details.provider.dart';
+import 'package:wearhouse/screens/PutAway/put_away_orders.dart';
 
-import 'package:wearhouse/screens/receive_page.dart';
 import 'package:wearhouse/services/api/recive_api.dart';
+
+import 'Receive/receive_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -153,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => const ReceiveOrders(
-                                          barcode: '',
+                                          barcode: "",
                                         )));
                             ChangeNotifier();
                           },
@@ -190,37 +192,45 @@ class _MyHomePageState extends State<MyHomePage> {
                       const SizedBox(
                         width: 20,
                       ),
-                      Card(
-                        elevation: 7,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Container(
-                          height: height * 0.2,
-                          width: height * 0.2,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: CustomColor.white,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const PutAwayOrders()));
+                        },
+                        child: Card(
+                          elevation: 7,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Container(
+                            height: height * 0.2,
+                            width: height * 0.2,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: CustomColor.white,
+                            ),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    "Put Away",
+                                    style: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                        color: CustomColor.customgray),
+                                  ),
+                                  IconButton(
+                                      onPressed: () {},
+                                      icon: Image.asset(
+                                          "assets/images/putaway.png")),
+                                  Image.asset(
+                                    "assets/images/receivebox.png",
+                                    height: height / 10,
+                                    width: width / 8,
+                                  )
+                                ]),
                           ),
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  "Put Away",
-                                  style: TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                      color: CustomColor.customgray),
-                                ),
-                                IconButton(
-                                    onPressed: () {},
-                                    icon: Image.asset(
-                                        "assets/images/putaway.png")),
-                                Image.asset(
-                                  "assets/images/receivebox.png",
-                                  height: height / 10,
-                                  width: width / 8,
-                                )
-                              ]),
                         ),
                       ),
                     ],

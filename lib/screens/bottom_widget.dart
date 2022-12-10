@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:wearhouse/screens/recieved_orders_select.dart';
 
 import '../const/color.dart';
 import '../services/bar_code_scaner.dart';

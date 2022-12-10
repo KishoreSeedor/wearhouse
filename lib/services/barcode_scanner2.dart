@@ -1,14 +1,9 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:provider/provider.dart';
-import 'package:wearhouse/models/orders_line_model.dart';
-import 'package:wearhouse/screens/receive_orders_line.dart';
-import 'package:wearhouse/screens/recieved_orders_select.dart';
-import 'package:wearhouse/services/bar_code_scaner.dart';
 
 import '../const/color.dart';
-import '../screens/received_order_line2.dart';
+
 import 'api/recive_api.dart';
 import 'order_line_data.dart';
 
@@ -114,16 +109,18 @@ class _BarcodeScanner2State extends State<BarcodeScanner2> {
   Future<void> _getQRcode(Barcode qrCode, MobileScannerArguments? args) async {
     // TorchState val = cameraController.torchState as TorchState;
 
-    final users = Provider.of<RecieveAPI>(context, listen: false);
     var dataA = '';
     if (!_screenOpened) {
       String code = qrCode.rawValue.toString().trim();
       AudioPlayer().play(AssetSource("audio/scanner.mp3"));
       print("QRcode Fount -->$code");
       dataA = code;
+
       Navigator.pop(context);
+
       await OrderListFunction()
           .orderLineData(barcodeId: code, context: context);
+
       print("second code--> $code");
 
       // users.particularOrders(context: context, domain: code);

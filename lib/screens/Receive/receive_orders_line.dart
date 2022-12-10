@@ -6,14 +6,17 @@ import 'package:wearhouse/screens/home_page.dart';
 import 'package:wearhouse/services/alert_box.dart';
 import 'package:wearhouse/services/api/recive_api.dart';
 import 'package:wearhouse/services/barcode_scanner2.dart';
-import '../const/color.dart';
+import '../../const/color.dart';
+
 import 'received_order_line2.dart';
 
 List<OrderLine> globalorderLine = [];
 
 class OrdersLinePage1 extends StatefulWidget {
   final String barcode;
-  const OrdersLinePage1({super.key, required this.barcode});
+  final String id;
+
+  const OrdersLinePage1({super.key, required this.barcode, required this.id});
 
   @override
   State<OrdersLinePage1> createState() => _OrdersLinePage1State();
@@ -31,9 +34,10 @@ class _OrdersLinePage1State extends State<OrdersLinePage1> {
 
     particular =
         RecieveAPI().particularOrders(context: context, domain: widget.barcode);
-    filder = Provider.of<RecieveAPI>(context, listen: false)
-        .orderLine(context: context, domain: widget.barcode);
-    quantity = RecieveAPI().orderLine(context: context, domain: widget.barcode);
+    filder = Provider.of<RecieveAPI>(context, listen: false).orderLine(
+        context: context, domain: widget.barcode, pickingId: widget.id);
+    quantity = RecieveAPI().orderLine(
+        context: context, domain: widget.barcode, pickingId: widget.id);
     super.initState();
   }
 
@@ -73,7 +77,10 @@ class _OrdersLinePage1State extends State<OrdersLinePage1> {
             actions: [
               FutureBuilder<List<OrderLine>>(
                   future: Provider.of<RecieveAPI>(context, listen: false)
-                      .orderLine(context: context, domain: widget.barcode),
+                      .orderLine(
+                          context: context,
+                          domain: widget.barcode,
+                          pickingId: ''),
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
@@ -221,7 +228,7 @@ class _OrdersLinePage1State extends State<OrdersLinePage1> {
                                             onTap: () {
                                               // Navigator.pop(context);
                                               setState(() {
-                                                Navigator.pushReplacement(
+                                                Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                     builder: (context) =>
@@ -456,7 +463,7 @@ class _OrdersLinePage1State extends State<OrdersLinePage1> {
                 child: FloatingActionButton.extended(
                   heroTag: null,
                   onPressed: () {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
