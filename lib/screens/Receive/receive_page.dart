@@ -6,7 +6,7 @@ import 'package:wearhouse/models/reciveorders_model.dart';
 
 import 'package:wearhouse/services/api/recive_api.dart';
 
-import '../bottom_widget.dart';
+import 'bottom_widget_recevie.dart';
 import 'received_page_container.dart';
 import 'recieved_orders_select.dart';
 

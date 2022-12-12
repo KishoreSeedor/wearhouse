@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wearhouse/screens/PutAway/bottom_widget2.dart';
+import 'package:wearhouse/screens/PutAway/bottom_widget_putaway.dart';
 import 'package:wearhouse/screens/PutAway/put_away_orders_line.dart';
 
 import '../../const/color.dart';

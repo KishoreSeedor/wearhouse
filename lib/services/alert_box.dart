@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:wearhouse/const/color.dart';
 import 'package:wearhouse/models/quality_check_questions.dart';
 import 'package:wearhouse/models/quality_value.dart';
+import 'package:wearhouse/screens/PickOrder/pick_orders_line.dart';
+import 'package:wearhouse/screens/PickOrder/scanSerial.dart';
 import 'package:wearhouse/services/api/recive_api.dart';
 import 'package:wearhouse/services/bar_code_scaner.dart';
 import 'package:wearhouse/services/bar_code_scanner_alert.dart';
@@ -110,11 +112,15 @@ class GlobalAlertBox {
         });
   }
 
-  void confirmBox({required BuildContext context}) {
+  void confirmBox({
+    required BuildContext context,
+  }) {
     showDialog(
         barrierDismissible: false,
         context: context,
-        builder: (BuildContext context) {
+        builder: (
+          BuildContext context,
+        ) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -183,7 +189,11 @@ class GlobalAlertBox {
                                 height:
                                     MediaQuery.of(context).size.height * 0.04,
                                 child: TextButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      globalAlertBox.successBox(
+                                          context: context);
+                                    },
                                     child: const Text(
                                       "Yes",
                                       style: TextStyle(
@@ -458,7 +468,10 @@ class GlobalAlertBox {
   }
 
   Future<void> scanSerialNumber(
-      {required BuildContext context, required String barcode}) async {
+      {required BuildContext context,
+      required String barcode,
+      required String text,
+      required String subTitleText}) async {
     bool show = false;
 
     final TextEditingController controller = TextEditingController();
@@ -467,186 +480,204 @@ class GlobalAlertBox {
           barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                SafeArea(
-                  child: Dialog(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    backgroundColor: CustomColor.white,
-                    insetPadding: const EdgeInsets.all(10),
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.6,
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Container(
-                            decoration: const BoxDecoration(
-                                color: CustomColor.graybox,
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(10),
-                                    topRight: Radius.circular(10))),
-                            height: MediaQuery.of(context).size.height * 0.07,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: const [
-                                Text(
-                                  "Scan serial number",
-                                  style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      color: CustomColor.blackcolor),
+            return Container(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 80),
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      SafeArea(
+                        child: Dialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          backgroundColor: CustomColor.white,
+                          insetPadding: const EdgeInsets.all(10),
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.6,
+                            width: double.infinity,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  decoration: const BoxDecoration(
+                                      color: CustomColor.graybox,
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10))),
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.07,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Text(
+                                        text,
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.bold,
+                                            color: CustomColor.blackcolor),
+                                      ),
+                                      // Padding(
+                                      //   padding: const EdgeInsets.all(10),
+                                      //   child: IconButton(
+                                      //       onPressed: () {
+                                      //         Navigator.pop(context);
+                                      //       },
+                                      //       icon: Image.asset(
+                                      //         "assets/images/close.png",
+                                      //       )),
+                                      // )
+                                    ],
+                                  ),
                                 ),
-                                // Padding(
-                                //   padding: const EdgeInsets.all(10),
-                                //   child: IconButton(
-                                //       onPressed: () {
-                                //         Navigator.pop(context);
-                                //       },
-                                //       icon: Image.asset(
-                                //         "assets/images/close.png",
-                                //       )),
-                                // )
+                                Expanded(
+                                  flex: 2,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 50, left: 20, right: 20),
+                                    child: TextField(
+                                      onChanged: (value) {
+                                        if (value.isNotEmpty) {
+                                          show = true;
+                                        } else {
+                                          show = false;
+                                        }
+                                      },
+                                      controller: controller,
+                                      keyboardType: TextInputType.number,
+                                      decoration: InputDecoration(
+                                          suffixText: "Scan Barcode",
+                                          labelText: "Type or scan barcode",
+                                          floatingLabelBehavior:
+                                              FloatingLabelBehavior.never,
+                                          suffixIcon: show
+                                              ? IconButton(
+                                                  iconSize: 50,
+                                                  icon: Image.asset(
+                                                      "assets/images/Barcode2.png"),
+                                                  onPressed: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AlertBarcodeScanner(
+                                                          barcode: barcode,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                )
+                                              : null,
+                                          prefixIcon: show
+                                              ? null
+                                              : IconButton(
+                                                  iconSize: 50,
+                                                  icon: Image.asset(
+                                                      "assets/images/Barcode2.png"),
+                                                  onPressed: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AlertBarcodeScanner(
+                                                          barcode: barcode,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                )),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 18),
+                                  child: Text(
+                                    subTitleText,
+                                    style: TextStyle(
+                                        color: CustomColor.grayword,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 30),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.05,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.18,
+                                            decoration: BoxDecoration(
+                                                color: CustomColor.graybox,
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Image.asset(
+                                                "assets/images/back_image.png",
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const Text(
+                                          ".",
+                                          style: TextStyle(fontSize: 50),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.05,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.18,
+                                          decoration: BoxDecoration(
+                                              color: CustomColor.boxGreen,
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Image.asset(
+                                              "assets/images/tick.png",
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
                               ],
                             ),
                           ),
-                          Expanded(
-                            flex: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 50, left: 20, right: 20),
-                              child: TextField(
-                                onChanged: (value) {
-                                  if (value.isNotEmpty) {
-                                    show = true;
-                                  } else {
-                                    show = false;
-                                  }
-                                },
-                                controller: controller,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                    suffixText: "Scan Barcode",
-                                    labelText: "Type or scan barcode",
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.never,
-                                    suffixIcon: show
-                                        ? IconButton(
-                                            iconSize: 50,
-                                            icon: Image.asset(
-                                                "assets/images/Barcode2.png"),
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      AlertBarcodeScanner(
-                                                    barcode: barcode,
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          )
-                                        : null,
-                                    prefixIcon: show
-                                        ? null
-                                        : IconButton(
-                                            iconSize: 50,
-                                            icon: Image.asset(
-                                                "assets/images/Barcode2.png"),
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      AlertBarcodeScanner(
-                                                    barcode: barcode,
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          )),
-                              ),
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 18),
-                            child: Text(
-                              "Scan the serial number for the item",
-                              style: TextStyle(
-                                  color: CustomColor.grayword,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 30),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Container(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.05,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.18,
-                                      decoration: BoxDecoration(
-                                          color: CustomColor.graybox,
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Image.asset(
-                                          "assets/images/back_image.png",
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const Text(
-                                    ".",
-                                    style: TextStyle(fontSize: 50),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  Container(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.05,
-                                    width: MediaQuery.of(context).size.width *
-                                        0.18,
-                                    decoration: BoxDecoration(
-                                        color: CustomColor.boxGreen,
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Image.asset(
-                                        "assets/images/tick.png",
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             );
           });
     });

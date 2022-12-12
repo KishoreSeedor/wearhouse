@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'package:wearhouse/const/color.dart';
 import 'package:wearhouse/provider/login_details.provider.dart';
+import 'package:wearhouse/screens/PickOrder/pick_orders.dart';
 import 'package:wearhouse/screens/PutAway/put_away_orders.dart';
 
 import 'package:wearhouse/services/api/recive_api.dart';
@@ -176,15 +177,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                         fontWeight: FontWeight.bold,
                                         color: CustomColor.customgray),
                                   ),
-                                  IconButton(
-                                      onPressed: () {},
-                                      icon: Image.asset(
+                                  Container(
+                                      height: height * 0.04,
+                                      child: Image.asset(
                                           "assets/images/Receive.png")),
-                                  Image.asset(
-                                    "assets/images/receivebox.png",
-                                    height: height / 10,
-                                    width: width / 8,
-                                  )
+                                  Container(
+                                      height: height * 0.1,
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Image.asset(
+                                              "assets/images/receivebox.png"))),
                                 ]),
                           ),
                         ),
@@ -220,23 +222,112 @@ class _MyHomePageState extends State<MyHomePage> {
                                         fontWeight: FontWeight.bold,
                                         color: CustomColor.customgray),
                                   ),
-                                  IconButton(
-                                      onPressed: () {},
-                                      icon: Image.asset(
+                                  Container(
+                                      height: height * 0.04,
+                                      child: Image.asset(
                                           "assets/images/putaway.png")),
-                                  Image.asset(
-                                    "assets/images/receivebox.png",
-                                    height: height / 10,
-                                    width: width / 8,
-                                  )
+                                  Container(
+                                      height: height * 0.1,
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Image.asset(
+                                              "assets/images/receivebox.png"))),
                                 ]),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 70,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Card(
+                        elevation: 7,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const PickOrders()));
+                          },
+                          child: Container(
+                            height: height * 0.2,
+                            width: height * 0.2,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: CustomColor.white,
+                            ),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    "Pick",
+                                    style: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                        color: CustomColor.customgray),
+                                  ),
+                                  Container(
+                                    height: height * 0.11,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Image.asset(
+                                          "assets/images/pick_logo.png"),
+                                    ),
+                                  ),
+                                ]),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const PutAwayOrders()));
+                        },
+                        child: Card(
+                          elevation: 7,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Container(
+                            height: height * 0.2,
+                            width: height * 0.2,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: CustomColor.white,
+                            ),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    "Count",
+                                    style: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                        color: CustomColor.customgray),
+                                  ),
+                                  Container(
+                                    height: height * 0.11,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Image.asset(
+                                          "assets/images/count_logo.png"),
+                                    ),
+                                  ),
+                                ]),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: height * 0.05,
                   ),
                   const Padding(
                     padding: EdgeInsets.only(right: 200),

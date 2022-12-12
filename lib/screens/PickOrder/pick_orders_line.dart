@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:wearhouse/screens/PutAway/bottom_widget_putaway.dart';
-import 'package:wearhouse/services/scanner/put_away_orders_scanner.dart';
+import 'package:wearhouse/screens/PickOrder/bottom_widget_pick.dart';
+import 'package:wearhouse/screens/PickOrder/scanSerial.dart';
 
 import '../../const/color.dart';
 
-class PutAwayOrdersLine extends StatefulWidget {
-  const PutAwayOrdersLine({super.key});
+class PickOrderLines extends StatefulWidget {
+  const PickOrderLines({super.key});
 
   @override
-  State<PutAwayOrdersLine> createState() => _PutAwayOrdersLineState();
+  State<PickOrderLines> createState() => _PickOrderLinesState();
 }
 
-class _PutAwayOrdersLineState extends State<PutAwayOrdersLine> {
+class _PickOrderLinesState extends State<PickOrderLines> {
   String? barcode;
-
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -135,19 +134,13 @@ class _PutAwayOrdersLineState extends State<PutAwayOrdersLine> {
                       GestureDetector(
                         onTap: () {
                           // Navigator.pop(context);
-                          setState(() {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) =>
-                            //         OrederLinePage2(
-                            //       barcode: widget.barcode,
-                            //       value:
-                            //           snapshot.data![index],
-                            //     ),
-                            //   ),
-                            // );
-                          });
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ScanSerialBox(
+                                        barcodeValue: barcodeValue.toString(),
+                                      )));
                         },
                         child: Container(
                           padding: const EdgeInsets.all(17),
@@ -229,17 +222,17 @@ class _PutAwayOrdersLineState extends State<PutAwayOrdersLine> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.end,
                                       mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
+                                      children: const [
                                         Text(
                                           "1",
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                               color: CustomColor.blackcolor2,
                                               fontSize: 23,
                                               fontWeight: FontWeight.bold),
                                         ),
                                         Text(
                                           "3",
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                               color: CustomColor.blackcolor2,
                                               fontSize: 23,
                                               fontWeight: FontWeight.bold),
@@ -288,7 +281,7 @@ class _PutAwayOrdersLineState extends State<PutAwayOrdersLine> {
           ]),
         ),
         backgroundColor: CustomColor.backgroundColor,
-        floatingActionButton: PutAwayOrderLineScannerCamera(
+        floatingActionButton: PickOrderLineBottom(
           barcode: barcode,
         ));
   }

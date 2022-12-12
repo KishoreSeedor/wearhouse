@@ -1,35 +1,20 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:wearhouse/screens/PutAway/bottom_widget_putaway.dart';
-import 'package:wearhouse/screens/PutAway/put_away_orders_select.dart';
+import 'package:wearhouse/screens/PickOrder/bottom_widget_pick.dart';
+import 'package:wearhouse/screens/PickOrder/pick_orders_line.dart';
 
 import '../../const/color.dart';
-import '../../models/reciveorders_model.dart';
-import '../../services/api/recive_api.dart';
 import '../Receive/received_page_container.dart';
 
-class PutAwayOrders extends StatefulWidget {
-  const PutAwayOrders({super.key});
+class PickOrders extends StatefulWidget {
+  const PickOrders({super.key});
 
   @override
-  State<PutAwayOrders> createState() => _PutAwayOrdersState();
+  State<PickOrders> createState() => _PickOrdersState();
 }
 
 bool _visible = false;
 
-class _PutAwayOrdersState extends State<PutAwayOrders> {
-  AudioPlayer audioPlayer = AudioPlayer();
-  late bool hideFilder;
-  late Future<List<RecivedOrdersModel>> orders;
-  @override
-  void initState() {
-    orders = Provider.of<RecieveAPI>(context, listen: false)
-        .recievedoders(context: context);
-
-    super.initState();
-  }
-
+class _PickOrdersState extends State<PickOrders> {
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -37,8 +22,8 @@ class _PutAwayOrdersState extends State<PutAwayOrders> {
 
     String? barcode;
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
           appBar: AppBar(
             bottom: PreferredSize(
               preferredSize: _visible ? const Size(0, 400) : const Size(0, 0),
@@ -232,17 +217,14 @@ class _PutAwayOrdersState extends State<PutAwayOrders> {
               ),
             ),
             backgroundColor: CustomColor.darkwhite,
-            leading: Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: IconButton(
-                icon: Image.asset(
-                  "assets/images/putawaylogo.png",
-                ),
-                onPressed: () {},
+            leading: IconButton(
+              icon: Image.asset(
+                "assets/images/pick_logo2.png",
               ),
+              onPressed: () {},
             ),
             title: const Text(
-              "Put Away Orders",
+              "Pick Orders",
               style: TextStyle(
                   fontSize: 22,
                   color: Colors.black,
@@ -294,7 +276,7 @@ class _PutAwayOrdersState extends State<PutAwayOrders> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const PutAwayOrdersSelect()));
+                                      const PickOrderLines()));
                           setState(() {
                             _visible = false;
                           });
@@ -316,9 +298,7 @@ class _PutAwayOrdersState extends State<PutAwayOrders> {
               );
             },
           ),
-          floatingActionButton: BottomWidget2(
-            barcode: barcode,
-          )),
-    );
+          floatingActionButton: PickOrderBottom(barcode: barcode),
+        ));
   }
 }
