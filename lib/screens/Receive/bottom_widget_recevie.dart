@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../const/color.dart';
-import '../services/bar_code_scaner.dart';
-import 'home_page.dart';
+import '../../const/color.dart';
+import '../../services/bar_code_scaner.dart';
+import '../home_page.dart';
 
 class BottomWidgets extends StatelessWidget {
   BottomWidgets({
