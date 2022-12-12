@@ -134,14 +134,13 @@ class _PickOrderLinesState extends State<PickOrderLines> {
                       GestureDetector(
                         onTap: () {
                           // Navigator.pop(context);
-                          setState(() {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ScanSerialBox(
-                                          barcodeValue: barcodeValue.toString(),
-                                        )));
-                          });
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ScanSerialBox(
+                                        barcodeValue: barcodeValue.toString(),
+                                      )));
                         },
                         child: Container(
                           padding: const EdgeInsets.all(17),
