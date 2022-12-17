@@ -1,23 +1,18 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:provider/provider.dart';
+
 import '../../const/color.dart';
-import '../api/recive_api.dart';
 
-String? code;
-String? scannerValue = code;
-
-class PutAwayOrdersScanner extends StatefulWidget {
-  String? scannerValue;
-
-  PutAwayOrdersScanner({required this.scannerValue});
+class CountOrderScanner extends StatefulWidget {
+  String? barcode;
+  CountOrderScanner({super.key, required this.barcode});
 
   @override
-  State<PutAwayOrdersScanner> createState() => _PutAwayOrdersScannerState();
+  State<CountOrderScanner> createState() => _CountOrderScannerState();
 }
 
-class _PutAwayOrdersScannerState extends State<PutAwayOrdersScanner> {
+class _CountOrderScannerState extends State<CountOrderScanner> {
   MobileScannerController cameraController = MobileScannerController();
   bool _screenOpened = false;
   // bool torch = false;
@@ -117,8 +112,6 @@ class _PutAwayOrdersScannerState extends State<PutAwayOrdersScanner> {
 
   Future<void> _getQRcode(Barcode qrCode, MobileScannerArguments? args) async {
     // TorchState val = cameraController.torchState as TorchState;
-
-    final users = Provider.of<RecieveAPI>(context, listen: false);
 
     if (!_screenOpened) {
       String code = qrCode.rawValue.toString().trim();
@@ -131,16 +124,15 @@ class _PutAwayOrdersScannerState extends State<PutAwayOrdersScanner> {
   }
 }
 
-class PutAwayOrderLineScanner extends StatefulWidget {
-  String? scannerValue;
-  PutAwayOrderLineScanner({super.key, this.scannerValue});
+class CountOrderLineScanner extends StatefulWidget {
+  String? barcode;
+  CountOrderLineScanner({super.key, required this.barcode});
 
   @override
-  State<PutAwayOrderLineScanner> createState() =>
-      _PutAwayOrderLineScannerState();
+  State<CountOrderLineScanner> createState() => _CountOrderLineScannerState();
 }
 
-class _PutAwayOrderLineScannerState extends State<PutAwayOrderLineScanner> {
+class _CountOrderLineScannerState extends State<CountOrderLineScanner> {
   MobileScannerController cameraController = MobileScannerController();
   bool _screenOpened = false;
   // bool torch = false;
@@ -240,8 +232,6 @@ class _PutAwayOrderLineScannerState extends State<PutAwayOrderLineScanner> {
 
   Future<void> _getQRcode(Barcode qrCode, MobileScannerArguments? args) async {
     // TorchState val = cameraController.torchState as TorchState;
-
-    final users = Provider.of<RecieveAPI>(context, listen: false);
 
     if (!_screenOpened) {
       String code = qrCode.rawValue.toString().trim();

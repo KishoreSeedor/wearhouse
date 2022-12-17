@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:warehouse/screens/PickOrder/bottom_widget_pick.dart';
-import 'package:warehouse/screens/PickOrder/scanSerial.dart';
+import 'package:warehouse/screens/Count/scan_count_container.dart';
 
 import '../../const/color.dart';
+import 'bottom_widget_count.dart';
 
-class PickOrderLines extends StatefulWidget {
-  const PickOrderLines({super.key});
+class CountOrederLine extends StatefulWidget {
+  const CountOrederLine({super.key});
 
   @override
-  State<PickOrderLines> createState() => _PickOrderLinesState();
+  State<CountOrederLine> createState() => _CountOrederLineState();
 }
 
-class _PickOrderLinesState extends State<PickOrderLines> {
+class _CountOrederLineState extends State<CountOrederLine> {
   PageRouteBuilder opaquePage(Widget page) => PageRouteBuilder(
         opaque: false,
         pageBuilder: (BuildContext context, _, __) => page,
       );
-
   String? barcode;
   @override
   Widget build(BuildContext context) {
@@ -31,13 +30,14 @@ class _PickOrderLinesState extends State<PickOrderLines> {
               padding: EdgeInsets.only(left: width * 0.02),
               child: IconButton(
                 icon: Image.asset(
-                  "assets/images/pick_logo2.png",
+                  "assets/images/count_logo.png",
+                  scale: 0.9,
                 ),
                 onPressed: () {},
               ),
             ),
             title: const Text(
-              "Pick Order Lines",
+              "Count Order Lines",
               style: TextStyle(
                   fontSize: 22,
                   color: Colors.black,
@@ -137,10 +137,9 @@ class _PickOrderLinesState extends State<PickOrderLines> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          // Navigator.pop(context);
                           Navigator.push(
                             context,
-                            opaquePage(ScanSerialBox(
+                            opaquePage(ScanCountContainer(
                               barcodeValue: barcodeValue.toString(),
                             )),
                           );
@@ -284,7 +283,7 @@ class _PickOrderLinesState extends State<PickOrderLines> {
           ]),
         ),
         backgroundColor: CustomColor.backgroundColor,
-        floatingActionButton: PickOrderLineBottom(
+        floatingActionButton: BottomCountOrderLine(
           barcode: barcode,
         ));
   }

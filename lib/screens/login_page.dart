@@ -1,15 +1,15 @@
-// ignore_for_file: void_checks
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wearhouse/const/color.dart';
-import 'package:wearhouse/provider/device_info.dart';
-
-import 'package:wearhouse/services/dialogue.dart';
-import 'package:wearhouse/provider/login_auth_provider.dart';
+import 'package:warehouse/services/bar_code_scaner.dart';
+import '../const/color.dart';
+import '../provider/device_info.dart';
+import '../provider/login_auth_provider.dart';
+import '../services/dialogue.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({
+    super.key,
+  });
   static const routname = 'login-screen';
 
   @override
@@ -38,14 +38,17 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalServices _services = GlobalServices();
 
   void sumit() async {
-    showDialog(
-        context: context,
-        builder: ((context) {
-          return const Center(
-              child: CircularProgressIndicator(
-            color: CustomColor.yellow,
-          ));
-        }));
+    final cricleLoading = Provider.of<AuthProvider>(context, listen: false);
+    cricleLoading.isLoading
+        ? showDialog(
+            context: context,
+            builder: ((context) {
+              return const Center(
+                  child: CircularProgressIndicator(
+                color: CustomColor.yellow,
+              ));
+            }))
+        : null;
     String pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regExp = RegExp(pattern);
@@ -198,10 +201,10 @@ class _LoginPageState extends State<LoginPage> {
                                 borderRadius: BorderRadius.circular(10))),
                         child: Text(
                           loading.isLoading ? "Loading" : 'Login',
-                          style: const TextStyle(
-                            color: CustomColor.darkwhite,
-                            fontSize: 18,
-                          ),
+                          style: TextStyle(
+                              color: CustomColor.blackcolor,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),

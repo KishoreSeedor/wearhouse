@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:wearhouse/screens/PutAway/bottom_widget_putaway.dart';
-import 'package:wearhouse/services/scanner/put_away_orders_scanner.dart';
+import 'package:provider/provider.dart';
+import 'package:warehouse/screens/PutAway/bottom_widget_putaway.dart';
+import 'package:warehouse/screens/PutAway/put_away_provider/put_away_provider.dart';
 
 import '../../const/color.dart';
 
@@ -18,6 +19,7 @@ class _PutAwayOrdersLineState extends State<PutAwayOrdersLine> {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
+    final orderLine = Provider.of<PutAwayProvider>(context);
 
     return Scaffold(
         resizeToAvoidBottomInset: false,

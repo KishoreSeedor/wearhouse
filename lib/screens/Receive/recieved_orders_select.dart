@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
-
-import 'package:wearhouse/services/api/recive_api.dart';
 import '../../const/color.dart';
-
 import '../../models/recived_details_model.dart';
+import '../../services/api/recive_api.dart';
 import 'receive_orders_line.dart';
 import 'received_page_container.dart';
 
@@ -24,6 +21,7 @@ bool _visible = false;
 class _OrdersSelectPageState extends State<OrdersSelectPage> {
   @override
   Widget build(BuildContext context) {
+    String userId = '';
     // user provider is now not used in this page
     // final user = Provider.of<RecieveAPI>(context, listen: false);
     // final users = user.par;
@@ -254,7 +252,9 @@ class _OrdersSelectPageState extends State<OrdersSelectPage> {
               .particularOrders(context: context, domain: widget.barcode),
           builder: (context, snapshot) {
             debugPrint("new Value --> ${snapshot.data}");
+
             if (snapshot.hasData) {
+              userId = snapshot.data!.id.toString();
               print('${snapshot.data!}hellos hellos');
               return SafeArea(
                 child: Column(
@@ -335,13 +335,44 @@ class _OrdersSelectPageState extends State<OrdersSelectPage> {
                 ),
               );
             } else {
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(
                   color: CustomColor.yellow,
                 ),
               );
             }
           }),
+      floatingActionButton: SizedBox(
+        height: height * 0.06,
+        width: width * 0.3,
+        child: FloatingActionButton.extended(
+          heroTag: null,
+          onPressed: () {
+            RecieveAPI()
+                .receivedFinalValitation(context: context, userId: userId);
+          },
+          backgroundColor: CustomColor.yellow,
+          foregroundColor: Colors.black,
+          label: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Image.asset(
+                    "assets/images/validate.png",
+                    scale: 23,
+                  ),
+                  const Text(
+                    "Validate",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  )
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

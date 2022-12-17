@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wearhouse/const/color.dart';
+import '../const/color.dart';
 
 class GlobalSnackbar {
   genarelSnackbar({required BuildContext context, required String text}) {
@@ -8,7 +8,10 @@ class GlobalSnackbar {
         content: SizedBox(
           height: 40,
           child: Center(
-            child: Text(text),
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
         margin: const EdgeInsets.all(10),

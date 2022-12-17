@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:warehouse/screens/PickOrder/bottom_widget_pick.dart';
-import 'package:warehouse/screens/PickOrder/pick_orders_line.dart';
+import 'package:warehouse/screens/Count/bottom_widget_count.dart';
+import 'package:warehouse/screens/Count/count_order_lines.dart';
 
 import '../../const/color.dart';
 import '../Receive/received_page_container.dart';
 
-class PickOrders extends StatefulWidget {
-  const PickOrders({super.key});
+class CountOrders extends StatefulWidget {
+  const CountOrders({super.key});
 
   @override
-  State<PickOrders> createState() => _PickOrdersState();
+  State<CountOrders> createState() => _CountOrdersState();
 }
 
 bool _visible = false;
 
-class _PickOrdersState extends State<PickOrders> {
+class _CountOrdersState extends State<CountOrders> {
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -219,12 +219,12 @@ class _PickOrdersState extends State<PickOrders> {
             backgroundColor: CustomColor.darkwhite,
             leading: IconButton(
               icon: Image.asset(
-                "assets/images/pick_logo2.png",
+                "assets/images/count_logo.png",
               ),
               onPressed: () {},
             ),
             title: const Text(
-              "Pick Orders",
+              "Count Orders",
               style: TextStyle(
                   fontSize: 22,
                   color: Colors.black,
@@ -276,7 +276,7 @@ class _PickOrdersState extends State<PickOrders> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const PickOrderLines()));
+                                      const CountOrederLine()));
                           setState(() {
                             _visible = false;
                           });
@@ -298,7 +298,7 @@ class _PickOrdersState extends State<PickOrders> {
               );
             },
           ),
-          floatingActionButton: PickOrderBottom(barcode: barcode),
+          floatingActionButton: BottomCountOrder(barcode: barcode),
         ));
   }
 }

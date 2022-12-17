@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wearhouse/models/orders_line_model.dart';
-
-import 'package:wearhouse/services/alert_box.dart';
-import 'package:wearhouse/services/api/recive_api.dart';
-
 import '../../const/color.dart';
+import '../../models/orders_line_model.dart';
 import '../../models/quality_value.dart';
+import '../../services/alert_box.dart';
+import '../../services/api/recive_api.dart';
 import 'receive_orders_line.dart';
 
 // ignore: must_be_immutable
@@ -29,6 +27,10 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
   TextEditingController? feedBackController;
 
   late Future<List<QualityQuestionsValue?>> qualityFuture;
+  PageRouteBuilder opaquePage(Widget page) => PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (BuildContext context, _, __) => page,
+      );
 
   @override
   void initState() {
@@ -45,6 +47,8 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
     feedBackController = TextEditingController();
     qualityFuture = RecieveAPI()
         .qualityCheckValue(context: context, userId: widget.value.userid);
+    Provider.of<RecieveAPI>(context, listen: false)
+        .qualityCheck(context: context, userId: widget.value.userid);
     super.initState();
   }
 
@@ -304,9 +308,13 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
                           child: TextField(
                             decoration: InputDecoration(
                               hintText: widget.value.productOnQty.toString(),
+                              hintStyle: TextStyle(
+                                  color: CustomColor.dimensionColor,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
                             ),
-                            controller: quantityController,
-                            autofocus: true,
+                            // controller: quantityController,
+
                             keyboardType: TextInputType.number,
                             onSubmitted: (e) {
                               quantityController!.text = e;
@@ -343,7 +351,7 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
                                   Padding(
                                     padding: EdgeInsets.only(
                                         left: width * 0.05, top: height * 0.02),
-                                    child: Text(
+                                    child: const Text(
                                       "Length",
                                       style: TextStyle(
                                           fontSize: 22,
@@ -357,11 +365,15 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
                                       //height: cann't be changeable,
                                       width: width * 0.35,
                                       child: TextField(
-                                        controller: lengthController,
+                                        // controller: lengthController,
                                         onSubmitted: (e) {
                                           lengthController!.text = e;
                                         },
                                         textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: CustomColor.dimensionColor,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
                                         keyboardType: TextInputType.number,
                                         decoration: InputDecoration(
                                             border: OutlineInputBorder(
@@ -390,7 +402,7 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
                                 Padding(
                                   padding: EdgeInsets.only(
                                       left: width * 0.05, top: height * 0.02),
-                                  child: Text(
+                                  child: const Text(
                                     "Breadth",
                                     style: TextStyle(
                                         fontSize: 22,
@@ -404,11 +416,15 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
                                     //height: cann't be changeable,
                                     width: width * 0.35,
                                     child: TextField(
-                                      controller: breathController,
+                                      // controller: breathController,
                                       onSubmitted: (e) {
                                         breathController!.text = e;
                                       },
                                       textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: CustomColor.dimensionColor,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
                                       keyboardType: TextInputType.number,
                                       decoration: InputDecoration(
                                           border: OutlineInputBorder(
@@ -455,11 +471,15 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
                                       //height: cann't be changeable,
                                       width: width * 0.35,
                                       child: TextField(
-                                        controller: heightController,
+                                        // controller: heightController,
                                         onSubmitted: (e) {
                                           heightController!.text = e;
                                         },
                                         textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: CustomColor.dimensionColor,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
                                         keyboardType: TextInputType.number,
                                         decoration: InputDecoration(
                                             border: OutlineInputBorder(
@@ -502,11 +522,15 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
                                     //height: cann't be changeable,
                                     width: width * 0.35,
                                     child: TextField(
-                                      controller: weightController,
+                                      // controller: weightController,
                                       onSubmitted: (e) {
                                         weightController!.text = e;
                                       },
                                       textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: CustomColor.dimensionColor,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
                                       keyboardType: TextInputType.number,
                                       decoration: InputDecoration(
                                           border: OutlineInputBorder(
@@ -519,7 +543,7 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold),
                                           hintText:
-                                              widget.value.weight.toString(),
+                                              widget.value.breadth.toString(),
                                           fillColor: Colors.white70),
                                     ),
                                   ),
@@ -537,14 +561,14 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
                               children: [
                                 InkWell(
                                   onTap: () {
-                                    Navigator.push(
+                                    Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 OrdersLinePage1(
-                                                    barcode: widget.barcode,
-                                                    id: widget
-                                                        .value.pickingId)));
+                                                  barcode: widget.barcode,
+                                                  id: widget.value.pickingId,
+                                                )));
                                   },
                                   child: Container(
                                     height: MediaQuery.of(context).size.height *
@@ -605,16 +629,17 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
                                           //     domain: widget.barcode,
                                           //     pickingId:
                                           //         widget.value.pickingId);
-                                          Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    OrdersLinePage1(
-                                                      barcode: widget.barcode,
-                                                      id: widget
-                                                          .value.pickingId,
-                                                    )),
-                                          );
+
+                                          // Navigator.pushReplacement(
+                                          //   context,
+                                          //   MaterialPageRoute(
+                                          //       builder: (context) =>
+                                          //           OrdersLinePage1(
+                                          //             barcode: widget.barcode,
+                                          //             id: widget
+                                          //                 .value.pickingId,
+                                          //           )),
+                                          // );
                                           RecieveAPI().qualityCheck(
                                               context: context,
                                               userId: widget.value.userid);
@@ -624,13 +649,40 @@ class _OrederLinePage2State extends State<OrederLinePage2> {
                                           // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>
                                           // QualityCheck()
                                           // ));
-                                          globalAlertBox.qualityChecker(
-                                              feedBackValue: feedBackController,
-                                              qualityFuture: qualityFuture,
-                                              context: context,
-                                              barcode: widget.barcode,
-                                              userId: widget.value.userid);
-                                          QuestionGet().questionGet();
+                                          // Navigator.pushReplacement(
+                                          //     context,
+                                          //     MaterialPageRoute(
+                                          //         builder: (context) =>
+                                          //             QualityContainer(
+                                          //                 context: context,
+                                          //                 qualityFuture:
+                                          //                     qualityFuture,
+                                          //                 barcode:
+                                          //                     widget.barcode,
+                                          //                 feedBackvalue:
+                                          //                     feedBackController,
+                                          //                 userId: widget
+                                          //                     .value.userid)));
+
+                                          // Navigator.pushReplacement(
+                                          //     context,
+                                          //     MaterialPageRoute(
+                                          //         builder: (context) =>
+                                          //             OrdersLinePage1(
+                                          //               barcode: widget.barcode,
+                                          //               id: widget.value.userid,
+                                          //             )));
+
+                                          Navigator.pushReplacement(
+                                            context,
+                                            opaquePage(QualityContainer(
+                                                context: context,
+                                                qualityFuture: qualityFuture,
+                                                barcode: widget.barcode,
+                                                feedBackvalue:
+                                                    feedBackController,
+                                                userId: widget.value.userid)),
+                                          );
                                         } else {
                                           globalAlertBox.topAlertBox(
                                               context: context,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wearhouse/screens/PutAway/bottom_widget_putaway.dart';
-import 'package:wearhouse/screens/PutAway/put_away_orders_line.dart';
+
+import 'package:warehouse/screens/PutAway/put_away_orders_details.dart';
 
 import '../../const/color.dart';
 import '../Receive/received_page_container.dart';

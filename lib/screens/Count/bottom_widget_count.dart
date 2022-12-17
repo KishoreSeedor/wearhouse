@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:warehouse/screens/PickOrder/scanner_pick.dart';
-
+import 'package:warehouse/screens/Count/scanner_count.dart';
 import '../../const/color.dart';
 import '../home_page.dart';
 
-class PickOrderBottom extends StatefulWidget {
+class BottomCountOrder extends StatefulWidget {
   String? barcode;
-  PickOrderBottom({super.key, required this.barcode});
+  BottomCountOrder({super.key, required this.barcode});
 
   @override
-  State<PickOrderBottom> createState() => _PickOrderBottomState();
+  State<BottomCountOrder> createState() => _BottomCountOrderState();
 }
 
-class _PickOrderBottomState extends State<PickOrderBottom> {
+class _BottomCountOrderState extends State<BottomCountOrder> {
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -27,8 +26,8 @@ class _PickOrderBottomState extends State<PickOrderBottom> {
               heroTag: null,
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => PickOrderScanner(
-                          scannerValue: widget.barcode,
+                    builder: (context) => CountOrderScanner(
+                          barcode: widget.barcode,
                         )));
               },
               backgroundColor: CustomColor.yellow,
@@ -78,15 +77,15 @@ class _PickOrderBottomState extends State<PickOrderBottom> {
   }
 }
 
-class PickOrderLineBottom extends StatefulWidget {
+class BottomCountOrderLine extends StatefulWidget {
   String? barcode;
-  PickOrderLineBottom({super.key, required this.barcode});
+  BottomCountOrderLine({super.key, required this.barcode});
 
   @override
-  State<PickOrderLineBottom> createState() => _PickOrderLineBottomState();
+  State<BottomCountOrderLine> createState() => _BottomCountOrderLineState();
 }
 
-class _PickOrderLineBottomState extends State<PickOrderLineBottom> {
+class _BottomCountOrderLineState extends State<BottomCountOrderLine> {
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -101,8 +100,8 @@ class _PickOrderLineBottomState extends State<PickOrderLineBottom> {
               heroTag: null,
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => PickOrderLineScanner(
-                          scannerValue: widget.barcode,
+                    builder: (context) => CountOrderLineScanner(
+                          barcode: widget.barcode,
                         )));
               },
               backgroundColor: CustomColor.yellow,

@@ -1,17 +1,13 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:wearhouse/const/color.dart';
-import 'package:wearhouse/models/quality_check_questions.dart';
-import 'package:wearhouse/models/quality_value.dart';
-import 'package:wearhouse/screens/PickOrder/pick_orders_line.dart';
-import 'package:wearhouse/screens/PickOrder/scanSerial.dart';
-import 'package:wearhouse/services/api/recive_api.dart';
-import 'package:wearhouse/services/bar_code_scaner.dart';
-import 'package:wearhouse/services/bar_code_scanner_alert.dart';
+import 'package:warehouse/widgets/custom_alert_dialog.dart';
+import '../const/color.dart';
+import '../models/quality_check_questions.dart';
+import '../models/quality_value.dart';
+import '../screens/PickOrder/scanSerial.dart';
+import '../screens/Receive/receive_orders_line.dart';
+import 'api/recive_api.dart';
+import 'bar_code_scanner_alert.dart';
 
 String? value;
 
@@ -19,7 +15,6 @@ List<QualityQuestions?> questionDetailis = [];
 
 class QuestionGet {
   Future<List<QualityQuestions>?> questionGet() async {
-    List<QualityQuestions> newValue;
     for (var i = 0; i < questionDetailis.length; i++) {
       print("questionidlength--->${questionDetailis.length}");
 
@@ -31,9 +26,9 @@ class QuestionGet {
 
 String? questionId;
 String? chooseValue;
-String? feedBackValueText;
+String feedBackValueText = '';
 String? question;
-int index = 0;
+int selectindex = 0;
 
 List<DropdownMenuItem<String>> get dropdownItems {
   List<DropdownMenuItem<String>> menuItems = [
@@ -683,17 +678,22 @@ class GlobalAlertBox {
     });
   }
 
-  Future<void> qualityChecker(
-      {required BuildContext context,
-      required Future<List<QualityQuestionsValue?>> qualityFuture,
-      required String barcode,
-      required TextEditingController? feedBackValue,
-      required String userId}) async {
+  Future<void> qualityChecker({
+    required BuildContext context,
+    required Future<List<QualityQuestionsValue?>> qualityFuture,
+    required String barcode,
+    required TextEditingController? feedBackValue,
+    required String userId,
+  }) async {
     bool show = false;
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+    final question = Provider.of<RecieveAPI>(context, listen: false);
 
     return WidgetsBinding.instance.addPostFrameCallback((_) {
+      String? questionId;
+
+      print("questionId---> ${questionId.toString}");
       showDialog(
           barrierDismissible: false,
           context: context,
@@ -836,7 +836,7 @@ class GlobalAlertBox {
                                           CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                          question.toString(),
+                                          question.ques[selectindex].questions,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                               fontSize: 20,
@@ -850,7 +850,8 @@ class GlobalAlertBox {
                                           child: DropdownItemState(
                                               userId: userId,
                                               data: qualityFuture,
-                                              answerId: userId),
+                                              questionId:
+                                                  questionId.toString()),
                                         )
                                       ],
                                     ),
@@ -904,7 +905,16 @@ class GlobalAlertBox {
                                       ],
                                     ),
                                   ),
-                                  NextScreen()
+                                  NextScreen(
+                                    quesuionId: question.ques[selectindex].id,
+                                    questions:
+                                        question.ques[selectindex].questions,
+                                    selectedIndex: selectindex,
+                                    userId: userId,
+                                    barcode: barcode,
+                                    feedBackValue: feedBackValue,
+                                    qualityFuture: qualityFuture,
+                                  )
                                 ],
                               );
                             } else {
@@ -926,9 +936,24 @@ class GlobalAlertBox {
 }
 
 class NextScreen extends StatefulWidget {
-  const NextScreen({
-    Key? key,
-  }) : super(key: key);
+  String? userId;
+  int selectedIndex;
+  final String quesuionId;
+  final String questions;
+  final Future<List<QualityQuestionsValue?>> qualityFuture;
+  final String barcode;
+  final TextEditingController? feedBackValue;
+
+  NextScreen(
+      {Key? key,
+      required this.userId,
+      required this.quesuionId,
+      required this.qualityFuture,
+      required this.barcode,
+      required this.feedBackValue,
+      required this.questions,
+      required this.selectedIndex})
+      : super(key: key);
 
   @override
   State<NextScreen> createState() => _NextScreenState();
@@ -977,23 +1002,30 @@ class _NextScreenState extends State<NextScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextButton(
-                  onPressed: () {
-                    setState(() {
-                      RecieveAPI().qualityValueGet(
-                          context: context,
-                          feedBack: feedBackValueText.toString(),
-                          questionId: questionId.toString(),
-                          answerId: chooseValue.toString());
+                    onPressed: () {
+                      print("select-->${selectindex += 1}");
+                      setState(() {
+                        selectindex += 1;
+                      });
+                      RecieveAPI()
+                          .qualityValueGet(
+                            context: context,
+                            feedBack: feedBackValueText.toString(),
+                            questionId: widget.quesuionId,
+                            answerId: chooseValue.toString(),
+                            userId: widget.userId.toString(),
+                          )
+                          .then((value) {});
+
                       feedBackValueText = "";
-                      questionDetailis[index]!.questions + 1.toString();
-                      print(
-                          "11111--->${questionDetailis[index]!.questions.length + 1}");
-                    });
-                  },
-                  child: Image.asset(
-                    "assets/images/tick.png",
-                  ),
-                ),
+                    },
+                    child: widget.questions.length == selectindex
+                        ? Image.asset(
+                            "assets/images/front.png",
+                          )
+                        : Image.asset(
+                            "assets/images/tick.png",
+                          )),
               ),
             ),
           ],
@@ -1006,13 +1038,13 @@ class _NextScreenState extends State<NextScreen> {
 class DropdownItemState extends StatefulWidget {
   String userId;
 
-  String answerId;
+  String questionId;
   Future<List<QualityQuestionsValue?>>? data;
   DropdownItemState({
     super.key,
     required this.userId,
     required this.data,
-    required this.answerId,
+    required this.questionId,
   });
 
   @override
@@ -1026,6 +1058,7 @@ class _DropdownItemStateState extends State<DropdownItemState> {
   TextEditingController? qualityValueController;
 
   String? selectedValue;
+
   String? qualityValue;
   // List<QualityQuestionsValue?> prodectList = [];
   final _dropdownFormKey = GlobalKey<FormState>();
@@ -1081,11 +1114,13 @@ class _DropdownItemStateState extends State<DropdownItemState> {
                       .map((e) => DropdownMenuItem<String>(
                             enabled: true,
                             value: e!.id,
-                            child: Text(
-                              e.questions,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            child: Center(
+                              child: Text(
+                                e.questions,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ))
                       .toList(),
@@ -1094,13 +1129,449 @@ class _DropdownItemStateState extends State<DropdownItemState> {
                     FocusScope.of(context).requestFocus(FocusNode());
                     setState(() {
                       selectedValue = newValue;
-                      print("selectedValue-->$selectedValue");
+
+                      chooseValue = selectedValue.toString();
+                      print("new selectedValue-->${chooseValue}");
                     });
                   });
             } else {
               return Container();
             }
           }),
+    );
+  }
+}
+
+class QualityContainer extends StatefulWidget {
+  final String barcode;
+  final String userId;
+  final TextEditingController? feedBackvalue;
+  final Future<List<QualityQuestionsValue?>> qualityFuture;
+
+  QualityContainer({
+    super.key,
+    required BuildContext context,
+    required this.qualityFuture,
+    required this.barcode,
+    required this.feedBackvalue,
+    required this.userId,
+  });
+
+  @override
+  State<QualityContainer> createState() => _QualityContainerState();
+}
+
+class _QualityContainerState extends State<QualityContainer> {
+  TextEditingController? qualityValueController;
+
+  String? selectedValue;
+
+  String? qualityValue;
+  // List<QualityQuestionsValue?> prodectList = [];
+  final _dropdownFormKey = GlobalKey<FormState>();
+  Future<List<QualityQuestions?>>? qualityFuture;
+  @override
+  void initState() {
+    qualityFuture =
+        RecieveAPI().qualityCheck(context: context, userId: widget.userId);
+    qualityValueController = TextEditingController();
+
+    super.initState();
+  }
+
+  int selectindex = 0;
+
+  @override
+  void dispose() {
+    qualityValueController!.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
+    final question = Provider.of<RecieveAPI>(context, listen: false);
+
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              backgroundColor: CustomColor.white,
+              insetPadding: const EdgeInsets.all(10),
+              child: Container(
+                  height: MediaQuery.of(context).size.height * 0.6,
+                  width: double.infinity,
+                  child: FutureBuilder<List<QualityQuestions?>>(
+                      future: RecieveAPI().qualityCheck(
+                          context: context, userId: widget.userId),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          if (selectindex < snapshot.data!.length) {
+                            questionDetailis = snapshot.data!;
+                            print(
+                                'questionsssss ${selectindex < snapshot.data!.length}');
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  decoration: const BoxDecoration(
+                                      color: CustomColor.graybox,
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10))),
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.06,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.only(left: width * 0.05),
+                                        child: const Text(
+                                          "Quality Check",
+                                          style: TextStyle(
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold,
+                                              color: CustomColor.blackcolor),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 4,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        question.ques[selectindex].questions,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            color: CustomColor.blackcolor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: height * 0.05,
+                                            vertical: width * 0.1),
+                                        child: Form(
+                                          key: _dropdownFormKey,
+                                          child: FutureBuilder<
+                                                  List<QualityQuestionsValue?>>(
+                                              future: widget.qualityFuture,
+                                              builder: (context, snapshot) {
+                                                if (snapshot.hasData) {
+                                                  return DropdownButtonFormField(
+                                                      isExpanded: true,
+                                                      icon: const Visibility(
+                                                          visible: false,
+                                                          child: Icon(Icons
+                                                              .arrow_downward)),
+                                                      hint: const Text(
+                                                        "choose",
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: CustomColor
+                                                                .blackcolor),
+                                                      ),
+                                                      alignment: Alignment
+                                                          .center,
+                                                      decoration:
+                                                          InputDecoration(
+                                                              border:
+                                                                  OutlineInputBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            18),
+                                                              ),
+                                                              fillColor:
+                                                                  CustomColor
+                                                                      .appbarColor,
+                                                              filled: true,
+                                                              contentPadding:
+                                                                  EdgeInsets.symmetric(
+                                                                      vertical:
+                                                                          height *
+                                                                              0.001),
+                                                              enabledBorder: OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              18))),
+
+                                                      // value: snapshot.data![index]!.questions,
+                                                      items: snapshot.data!
+                                                          .map((e) =>
+                                                              DropdownMenuItem<
+                                                                  String>(
+                                                                enabled: true,
+                                                                value: e!.id,
+                                                                child: Center(
+                                                                  child: Text(
+                                                                    e.questions,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                    style: const TextStyle(
+                                                                        fontSize:
+                                                                            18,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  ),
+                                                                ),
+                                                              ))
+                                                          .toList(),
+                                                      value: selectedValue,
+                                                      onChanged: (newValue) {
+                                                        FocusScope.of(context)
+                                                            .requestFocus(
+                                                                FocusNode());
+                                                        setState(() {
+                                                          selectedValue =
+                                                              newValue;
+                                                          chooseValue =
+                                                              selectedValue
+                                                                  .toString();
+                                                          print(
+                                                              "choosevalue--> $chooseValue");
+                                                        });
+                                                      });
+                                                } else {
+                                                  return Container();
+                                                }
+                                              }),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        "Feedback",
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.only(top: height * 0.01),
+                                        child: SizedBox(
+                                          //height: cann't be changeable,
+                                          width: width * 0.85,
+                                          child: TextField(
+                                            controller: widget.feedBackvalue,
+                                            onSubmitted: (e) {
+                                              widget.feedBackvalue!.text = e;
+                                              feedBackValueText =
+                                                  widget.feedBackvalue!.text;
+                                            },
+                                            textAlign: TextAlign.start,
+                                            keyboardType: TextInputType.name,
+                                            decoration: InputDecoration(
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.0),
+                                                ),
+
+                                                // hintStyle: const TextStyle(
+                                                //     color: CustomColor
+                                                //         .dimensionColor,
+                                                //     fontSize: 18,
+                                                //     fontWeight:
+                                                //         FontWeight.bold),
+                                                // hintText:
+                                                //     feedBackValueText.isEmpty
+                                                //         ? ""
+                                                //         : feedBackValueText,
+                                                fillColor: Colors.white70),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 30),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        InkWell(
+                                          onTap: () {
+                                            if (selectindex == 0) {
+                                              Navigator.pop(context);
+                                            } else {
+                                              setState(() {
+                                                selectindex -= 1;
+                                              });
+                                            }
+                                          },
+                                          child: Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.05,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.18,
+                                            decoration: BoxDecoration(
+                                                color: selectindex == 0
+                                                    ? CustomColor.graybox
+                                                    : CustomColor.greencolor,
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Image.asset(
+                                                "assets/images/back_image.png",
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const Text(
+                                          ".",
+                                          style: TextStyle(fontSize: 50),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.05,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.18,
+                                          decoration: BoxDecoration(
+                                              color: CustomColor.boxGreen,
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: TextButton(
+                                              onPressed: () {
+                                                print(
+                                                    "select-->${selectindex + 1}");
+                                                if (selectindex ==
+                                                    question.ques.length) {
+                                                  print(
+                                                      "question length-->${question.ques.length}");
+                                                  RecieveAPI()
+                                                      .qualityValueGet(
+                                                    context: context,
+                                                    feedBack: feedBackValueText
+                                                        .toString(),
+                                                    questionId: question
+                                                        .ques[selectindex].id,
+                                                    answerId:
+                                                        chooseValue.toString(),
+                                                    userId: widget.userId
+                                                        .toString(),
+                                                  )
+                                                      .then((value) {
+                                                    chooseValue = null;
+                                                    Navigator.pushReplacement(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                OrdersLinePage1(
+                                                                    barcode: widget
+                                                                        .barcode,
+                                                                    id: widget
+                                                                        .userId)));
+                                                  });
+                                                } else {
+                                                  print(
+                                                      '------->>>>page change');
+                                                  setState(() {
+                                                    selectindex += 1;
+                                                  });
+                                                  RecieveAPI()
+                                                      .qualityValueGet(
+                                                    context: context,
+                                                    feedBack: feedBackValueText
+                                                        .toString(),
+                                                    questionId: question
+                                                        .ques[selectindex].id,
+                                                    answerId:
+                                                        chooseValue.toString(),
+                                                    userId: widget.userId
+                                                        .toString(),
+                                                  )
+                                                      .then((value) {
+                                                    print(
+                                                        '$chooseValue------->>>> then function');
+                                                    feedBackValueText = '';
+                                                    chooseValue = null;
+                                                    selectedValue = null;
+                                                    widget.feedBackvalue!.text =
+                                                        '';
+                                                    print(selectedValue
+                                                            .toString() +
+                                                        '----->>> choosen value');
+                                                    print(chooseValue
+                                                            .toString() +
+                                                        '----->>> choosen value');
+                                                    setState(() {});
+                                                  });
+                                                }
+                                              },
+                                              child: question.ques.length - 1 ==
+                                                      selectindex
+                                                  ? Image.asset(
+                                                      "assets/images/tick.png",
+                                                    )
+                                                  : Image.asset(
+                                                      "assets/images/front.png",
+                                                    )),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          } else {
+                            // Navigator.pop(context);
+                            Navigator.pop(context);
+                          }
+                        }
+                        return Center(
+                            child: CircularProgressIndicator(
+                          color: CustomColor.yellow,
+                        ));
+                      })),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

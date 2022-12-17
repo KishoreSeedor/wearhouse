@@ -1,11 +1,9 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wearhouse/const/color.dart';
-import 'package:wearhouse/models/reciveorders_model.dart';
-
-import 'package:wearhouse/services/api/recive_api.dart';
-
+import '../../const/color.dart';
+import '../../models/reciveorders_model.dart';
+import '../../services/api/recive_api.dart';
 import 'bottom_widget_recevie.dart';
 import 'received_page_container.dart';
 import 'recieved_orders_select.dart';
@@ -24,14 +22,15 @@ bool _visible = false;
 class _ReceiveOrdersState extends State<ReceiveOrders> {
   AudioPlayer audioPlayer = AudioPlayer();
   late bool hideFilder;
-  late Future<List<RecivedOrdersModel>> orders;
-  @override
-  void initState() {
-    orders = Provider.of<RecieveAPI>(context, listen: false)
-        .recievedoders(context: context);
+  String? userId;
+  // late Future<List<RecivedOrdersModel>> orders;
+  // @override
+  // void initState() {
+  //   orders = Provider.of<RecieveAPI>(context, listen: false)
+  //       .recievedoders(context: context);
 
-    super.initState();
-  }
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -247,110 +246,127 @@ class _ReceiveOrdersState extends State<ReceiveOrders> {
                 fontFamily: "Nunito",
                 fontWeight: FontWeight.bold),
           ),
-          actions: [
-            FutureBuilder<List<RecivedOrdersModel>>(
-                future: orders,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    print('new length -->${snapshot.data!.length.toString()}');
-                    return Row(
-                      children: [
-                        Text(
-                          snapshot.data!.length.toString(),
-                          style: const TextStyle(
-                              color: CustomColor.blackcolor2,
-                              fontSize: 23,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        IconButton(
-                          icon: Image.asset(
-                            "assets/images/fillter.png",
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _visible = !_visible;
-                            });
-                          },
-                        ),
-                      ],
-                    );
-                  } else {
-                    return Container();
-                  }
-                })
+          actions: const [
+            // FutureBuilder<List<RecivedOrdersModel>>(
+            //     future: orders,
+            //     builder: (context, snapshot) {
+            //       if (snapshot.hasData) {
+            //         print('new length -->${snapshot.data!.length.toString()}');
+            //         return Row(
+            //           children: [
+            //             Text(
+            //               snapshot.data!.length.toString(),
+            //               style: const TextStyle(
+            //                   color: CustomColor.blackcolor2,
+            //                   fontSize: 23,
+            //                   fontWeight: FontWeight.bold),
+            //             ),
+            //             IconButton(
+            //               icon: Image.asset(
+            //                 "assets/images/fillter.png",
+            //               ),
+            //               onPressed: () {
+            //                 setState(() {
+            //                   _visible = !_visible;
+            //                 });
+            //               },
+            //             ),
+            //           ],
+            //         );
+            //       } else {
+            //         return Container();
+            //       }
+            //     })
           ],
         ),
-        body: FutureBuilder<List<RecivedOrdersModel>>(
-          future: orders,
+        body: FutureBuilder<List<RecivedOrdersModel>?>(
+          future: Provider.of<RecieveAPI>(context, listen: false)
+              .recievedoders(context: context),
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data!.isEmpty) {
-                return Center(
-                  child: Text(
-                    "No Recived Orders",
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                );
-              }
-              return ListView.separated(
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                          padding: const EdgeInsets.all(13),
-                          margin: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: CustomColor.gray200,
-                          ),
-                          child: ReceivedContainer(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => OrdersSelectPage(
-                                          barcode: snapshot.data![index].id)));
-                              setState(() {
-                                _visible = false;
-                              });
-                            },
-                            height: height,
-                            width: width,
-                            companyName: snapshot.data![index].companyName,
-                            createDate:
-                                snapshot.data![index].createDate.toString(),
-                            origin: snapshot.data![index].origin.toString(),
-                            displayName:
-                                snapshot.data![index].displayName.toString(),
-                          )),
-                    ],
-                  );
-                },
-                separatorBuilder: (BuildContext context, int itemCount) {
-                  return const Divider(
-                    thickness: 2,
-                    color: CustomColor.yellow,
-                  );
-                },
-              );
-            } else {
+            print(snapshot.data);
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(color: CustomColor.yellow),
               );
+            } else if (snapshot.hasError) {
+              Center(
+                child: Text(snapshot.error.toString()),
+              );
+            } else if (snapshot.hasData) {
+              print('' + snapshot.data.toString());
+              return snapshot.data!.isEmpty
+                  ? Center(
+                      child: Text(
+                        "No Data is Available",
+                        style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  : ListView.separated(
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        userId = snapshot.data![index].id;
+                        // print("uservali-->${userId}");
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                                padding: const EdgeInsets.all(13),
+                                margin: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: CustomColor.gray200,
+                                ),
+                                child: ReceivedContainer(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                OrdersSelectPage(
+                                                    barcode: snapshot
+                                                        .data![index].id)));
+                                    setState(() {
+                                      _visible = false;
+                                    });
+                                  },
+                                  height: height,
+                                  width: width,
+                                  companyName:
+                                      snapshot.data![index].companyName,
+                                  createDate: snapshot.data![index].createDate
+                                      .toString(),
+                                  origin:
+                                      snapshot.data![index].origin.toString(),
+                                  displayName: snapshot.data![index].displayName
+                                      .toString(),
+                                )),
+                          ],
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int itemCount) {
+                        return const Divider(
+                          thickness: 2,
+                          color: CustomColor.yellow,
+                        );
+                      },
+                    );
             }
+            return Center(
+              child: Text('Something went wrong'),
+            );
           },
         ),
         floatingActionButton: BottomWidgets(
           width: width,
           height: height,
           barcode: widget.barcode,
+          userId: userId.toString(),
         ),
       ),
     );

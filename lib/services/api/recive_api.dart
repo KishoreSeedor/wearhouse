@@ -3,17 +3,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as https;
-import 'package:wearhouse/const/config.dart';
-import 'package:wearhouse/models/orders_line_model.dart';
-import 'package:wearhouse/models/quality_check_questions.dart';
-import 'package:wearhouse/models/quality_value.dart';
-import 'package:wearhouse/provider/login_details.provider.dart';
-
-import 'package:wearhouse/services/alert_box.dart';
-import 'package:wearhouse/services/snackbar.dart';
-
+import '../../models/orders_line_model.dart';
+import '../../models/quality_check_questions.dart';
+import '../../models/quality_value.dart';
 import '../../models/recived_details_model.dart';
 import '../../models/reciveorders_model.dart';
+import '../../provider/login_details.provider.dart';
+import '../../screens/PutAway/put_away_orders.dart';
+import '../alert_box.dart';
+import '../snackbar.dart';
 
 //This is the Recive orders page API derived page
 //Dio was used for get api details.
@@ -85,12 +83,23 @@ class RecieveAPI with ChangeNotifier {
   }
 
   List<QualityQuestionsValue> get quesValue {
+    // ignore: unrelated_type_equality_checks
     if (_quesValue == "") {
       _quesValue = "Not yet updated" as List<QualityQuestionsValue>;
       return _quesValue;
     } else {
       return _quesValue;
     }
+  }
+
+  String? _errorMessage;
+  String? get errorMessage {
+    return _errorMessage;
+  }
+
+  bool? _isError;
+  bool? get isError {
+    return _isError;
   }
 
   List<OrderLine> get ord {
@@ -110,6 +119,7 @@ class RecieveAPI with ChangeNotifier {
     final user = Provider.of<UserDetails>(context, listen: false);
 
     await user.getAllDetails();
+    List<RecivedOrdersModel>? result;
     List<RecivedOrdersModel> getOrders = [];
 
     var headers = {
@@ -126,12 +136,22 @@ class RecieveAPI with ChangeNotifier {
     try {
       https.Response response =
           await https.get(Uri.parse(url), headers: headers);
-      print("respnsee-->$response");
+      // print("respnsee-->$response");
       var jsonData = json.decode(response.body);
-      print("json-->$jsonData");
-      print(response.body);
+      // print("json-->$jsonData");
+      // print(response.body);
       if (response.statusCode == 200) {
         for (var i = 0; i < jsonData.length; i++) {
+          String partnerId;
+          String companyName;
+          if (jsonData[i]["partner_id"] == false) {
+            partnerId = '';
+            companyName = '';
+          } else {
+            partnerId = jsonData[i]["partner_id"][0].toString();
+            companyName = jsonData[i]["partner_id"][1].toString();
+          }
+
           getOrders.add(RecivedOrdersModel(
             barcode: jsonData[i]["barcode"].toString(),
             createDate: jsonData[i]["create_date"].toString(),
@@ -139,12 +159,13 @@ class RecieveAPI with ChangeNotifier {
             displayName: jsonData[i]["display_name"].toString(),
             id: jsonData[i]["id"].toString(),
             origin: jsonData[i]["origin"].toString(),
-            partnerId: jsonData[i]["partner_id"][0].toString(),
-            companyName: jsonData[i]["partner_id"][1].toString(),
+            partnerId: partnerId,
+            companyName: companyName,
             scheduledDate: jsonData[i]["scheduled_date"].toString(),
             transportDate: jsonData[i]["transport_date"].toString(),
             skuId: jsonData[0]['x_sku_id'].toString(),
           ));
+
           print('partner--> ${getOrders[i].partnerId.toString()}');
         }
 
@@ -153,16 +174,32 @@ class RecieveAPI with ChangeNotifier {
         _isLoading = false;
         print('NNNNNN' + getOrders.toString());
         // notifyListeners();
+        return getOrders;
       } else {
         _isLoading = false;
         // notifyListeners();
 
         print(response.reasonPhrase! + 'last response');
+        return result!;
       }
     } on HttpException catch (e) {
-      print(e);
+      debugPrint("login api error --> ${e.message}");
+      await globalSnackBar.genarelSnackbar(
+          context: context, text: e.message.toString());
+      return result!;
+    } on SocketException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "No Internet Connection";
+      return result!;
+    } on FormatException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "Invalid Data Format";
+      return result!;
+    } catch (e) {
+      return Future.error(e.toString());
     }
-    return getOrders;
   }
 
   Future<RecievedDetails?> particularOrders(
@@ -186,6 +223,7 @@ class RecieveAPI with ChangeNotifier {
     print(
         "First domain-->http://eiuat.seedors.com:8290/seedor-api/warehouse/received-orders?fields={'id','scheduled_date','origin','transport_date','display_name','date','partner_id','create_date','barcode'}&clientid=$clinedId&domain=[('id','=',$domain)]");
     try {
+      var result = '';
       https.Response response =
           await https.get(Uri.parse(url), headers: header);
       print("Barcode value --> ${response.body}");
@@ -222,8 +260,22 @@ class RecieveAPI with ChangeNotifier {
 
         print(response.reasonPhrase);
       }
-    } on HttpException catch (e) {
-      print(e);
+    } on HttpException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "No Service Found";
+    } on SocketException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "No Internet Connection";
+    } on FormatException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "Invalid Data Format";
+    } catch (e) {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "Some thing went wtong";
     }
     return _par;
   }
@@ -251,7 +303,7 @@ class RecieveAPI with ChangeNotifier {
         "http://eiuat.seedors.com:8290/seedor-api/warehouse/received-order-line?fields={'product_id','product_uom_qty','quantity_done','picking_partner_id','display_name','picking_id','barcode','x_sku_id','x_length','x_breadth','x_height','x_dimension','x_weight'}&clientid=$clainedId&domain=[('picking_id','=',$pickingId)]";
 
     print(
-        "order line -->http://eiuat.seedors.com:8290/seedor-api/warehouse/received-order-line?fields={'product_id','product_uom_qty','quantity_done','picking_partner_id','display_name'}&clientid=$clainedId&domain=[('picking_id','=',$pickingId)]");
+        "order line -->http://eiuat.seedors.com:8290/seedor-api/warehouse/received-order-line?fields={'product_id','product_uom_qty','quantity_done','picking_partner_id','display_name','picking_id','barcode','x_sku_id','x_length','x_breadth','x_height','x_dimension','x_weight'}&clientid=$clainedId&domain=[('picking_id','=',$pickingId)]");
 
     try {
       https.Response response =
@@ -260,13 +312,29 @@ class RecieveAPI with ChangeNotifier {
 
       if (response.statusCode == 200) {
         for (var i = 0; i < jsonData.length; i++) {
+          String pickingPartnerId;
+          String pickingPartnerName;
+          String pickingId;
+          String pickingName;
+          if (jsonData[i]['picking_partner_id'] == false) {
+            pickingPartnerName = '';
+            pickingId = "";
+            pickingName = "";
+            pickingPartnerId = "";
+          } else {
+            pickingPartnerId = jsonData[i]['picking_partner_id'][0].toString();
+            pickingPartnerName =
+                jsonData[i]['picking_partner_id'][1].toString();
+            pickingId = jsonData[i]['picking_id'][0].toString();
+            pickingName = jsonData[i]['picking_id'][1].toString();
+          }
           getDetails.add(OrderLine(
-            pickingId: jsonData[i]['picking_id'][0].toString(),
-            pickingName: jsonData[i]['picking_id'][1].toString(),
+            pickingId: pickingId,
+            pickingName: pickingName,
             displayName: jsonData[i]['display_name'].toString(),
             userid: jsonData[i]['id'].toString(),
-            pickingPartnerId: jsonData[i]['picking_partner_id'][0].toString(),
-            pickingPartnerName: jsonData[i]['picking_partner_id'][1].toString(),
+            pickingPartnerId: pickingPartnerId,
+            pickingPartnerName: pickingPartnerName,
             productId: jsonData[i]['product_id'][0].toString(),
             productName: jsonData[i]['product_id'][1].toString(),
             productOnQty:
@@ -297,8 +365,22 @@ class RecieveAPI with ChangeNotifier {
       } else {
         _isLoading = false;
       }
-    } on HttpException catch (e) {
-      print(e);
+    } on HttpException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "No Service Found";
+    } on SocketException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "No Internet Connection";
+    } on FormatException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "Invalid Data Format";
+    } catch (e) {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "Some thing went wtong";
     }
     return _ord;
   }
@@ -361,8 +443,22 @@ class RecieveAPI with ChangeNotifier {
       } else {
         await globalSnackBar.successsnackbar(context: context, text: "failed");
       }
-    } on HttpException catch (e) {
-      print(e);
+    } on HttpException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "No Service Found";
+    } on SocketException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "No Internet Connection";
+    } on FormatException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "Invalid Data Format";
+    } catch (e) {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "Some thing went wtong";
     }
   }
 
@@ -409,8 +505,22 @@ class RecieveAPI with ChangeNotifier {
       } else {
         isLoading == false;
       }
-    } on HttpException catch (e) {
-      print(e);
+    } on HttpException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "No Service Found";
+    } on SocketException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "No Internet Connection";
+    } on FormatException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "Invalid Data Format";
+    } catch (e) {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "Some thing went wtong";
     }
     return _ques;
   }
@@ -434,7 +544,7 @@ class RecieveAPI with ChangeNotifier {
     var url =
         "http://eiuat.seedors.com:8290/seedor-api/warehouse/quatity-check/dropdown?clientid=$clinedId&id=$userId&fields={'id','name'}&type=quality-test-value";
     print(
-        "qustionValue Api --->http://eiuat.seedors.com:8290/seedor-api/warehouse/quality-check/scenario?clientid=$clinedId&id=$userId&fields={'id','name'} ");
+        "qustionValue Api --->http://eiuat.seedors.com:8290/seedor-api/warehouse/quatity-check/dropdown?clientid=$clinedId&id=$userId&fields={'id','name'}&type=quality-test-value");
     try {
       https.Response response =
           await https.get(Uri.parse(url), headers: header);
@@ -458,8 +568,22 @@ class RecieveAPI with ChangeNotifier {
       } else {
         isLoading == false;
       }
-    } on HttpException catch (e) {
-      print(e);
+    } on HttpException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "No Service Found";
+    } on SocketException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "No Internet Connection";
+    } on FormatException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "Invalid Data Format";
+    } catch (e) {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "Some thing went wtong";
     }
     return _quesValue;
   }
@@ -469,6 +593,7 @@ class RecieveAPI with ChangeNotifier {
     required String feedBack,
     required String questionId,
     required String answerId,
+    required String userId,
   }) async {
     final user = Provider.of<UserDetails>(context, listen: false);
 
@@ -480,21 +605,83 @@ class RecieveAPI with ChangeNotifier {
     };
 
     var url =
-        "http://eiuat.seedors.com:8290/seedor-api/warehouse/quality-check/update?question_id=$questionId&answer_id=$answerId&note=$feedBack&verified_by=2&clientid=${user.clientID}";
+        "http://eiuat.seedors.com:8290/seedor-api/warehouse/quality-check/update?question_id=$questionId&answer_id=$answerId&note=$feedBack&verified_by=${user.id}&clientid=${user.clientID}";
     print(
-        "qualityValueGet---->http://eiuat.seedors.com:8290/seedor-api/warehouse/quality-check/update?question_id=$questionId&answer_id=$answerId&note=$feedBack&verified_by=2&clientid=${user.clientID}");
+        "qualityValueGet---->http://eiuat.seedors.com:8290/seedor-api/warehouse/quality-check/update?question_id=$questionId&answer_id=$answerId&note=$feedBack&verified_by=${user.id}&clientid=${user.clientID}");
 
     try {
       https.Response response =
           await https.put(Uri.parse(url), headers: header);
       var jsonData = json.decode(response.body);
       if (response.statusCode == 200) {
+        print("value-->${response.body}");
+        qualityCheckValue(context: context, userId: userId);
+        globalSnackBar.genarelSnackbar(context: context, text: "Success");
       } else {
         globalSnackBar.genarelSnackbar(
-            context: context, text: "Failed To Connect");
+            context: context, text: "Please Choose Value");
+      }
+    } on HttpException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "No Service Found";
+    } on SocketException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "No Internet Connection";
+    } on FormatException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "Invalid Data Format";
+    } catch (e) {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "Some thing went wtong";
+    }
+  }
+
+  Future<void> receivedFinalValitation(
+      {required BuildContext context, required String userId}) async {
+    final user = Provider.of<UserDetails>(context, listen: false);
+
+    await user.getAllDetails();
+    try {
+      _isLoading = true;
+      var header = {
+        'Cookie':
+            'session_id=aa66520e9df6fa47c0d7d174c2bf6d4fe3203db8; session_id=e2fc46ab8d73ddb088f3406a1ee387a52b0bcbb1'
+      };
+      var url =
+          "http://eiuat.seedors.com:8290/seedor-api/warehouse/move-to-putaway/$userId?clientid=${user.clientID}";
+      print(
+          "valit url-->http://eiuat.seedors.com:8290/seedor-api/warehouse/move-to-putaway/$userId?clientid=${user.clientID}");
+      var response = await https.post(Uri.parse(url), headers: header);
+      var jsonData = json.decode(response.body);
+      print("valid response-->${response.body}");
+      if (response.statusCode == 200) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => PutAwayOrdersScreen()));
+      } else if (jsonData["Details"] == jsonData["Details"]) {
+        globalSnackBar.genarelSnackbar(
+            context: context,
+            text:
+                "You cannot validate a transfer if no quantites are reserved nor done");
+      } else {
+        globalSnackBar.genarelSnackbar(
+            context: context, text: "Something was wrong,Try again later");
       }
     } on HttpException catch (e) {
-      print(e);
+      debugPrint("login api error --> ${e.message}");
+      await globalSnackBar.genarelSnackbar(
+          context: context, text: e.message.toString());
+    } on SocketException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "Some thing went wtong";
+    } on FormatException {
+      _isLoading = false;
+      _isError = false;
+      _errorMessage = "Some thing went wtong";
     }
   }
 }

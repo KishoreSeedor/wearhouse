@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wearhouse/const/color.dart';
-import 'package:wearhouse/services/alert_box.dart';
+import '../const/color.dart';
 
 class AlertTest extends StatelessWidget {
   const AlertTest({super.key, required this.barcode});

@@ -1,29 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-
-import 'package:warehouse/services/alert_box.dart';
 import '../../const/color.dart';
+import '../../services/alert_box.dart';
 import '../../services/bar_code_scanner_alert.dart';
+import '../PickOrder/scanSerial.dart';
 
-class ScanSerialBox extends StatefulWidget {
+class ScanCountContainer extends StatefulWidget {
   String? barcodeValue;
 
-  ScanSerialBox({
+  ScanCountContainer({
     super.key,
     required String barcodeValue,
   });
 
   @override
-  State<ScanSerialBox> createState() => _ScanSerialBoxState();
+  State<ScanCountContainer> createState() => _ScanCountContainerState();
 }
 
-final TextEditingController controller = TextEditingController();
 GlobalAlertBox globalAlertBox = GlobalAlertBox();
 bool show = false;
 String? barcode;
 String? barcodeValue = barcode;
 
-class _ScanSerialBoxState extends State<ScanSerialBox> {
+class _ScanCountContainerState extends State<ScanCountContainer> {
   final PageController pageController = PageController();
   bool nextPage = false;
 
@@ -357,11 +356,12 @@ class _ScanSerialBoxState extends State<ScanSerialBox> {
                       ),
                       onPressed: () {
                         setState(() {
-                          Navigator.pop(context);
                           pageController.previousPage(
                               duration: Duration(microseconds: 500),
                               curve: Curves.easeIn);
-                          globalAlertBox.confirmBox(context: context);
+
+                          Navigator.pop(context);
+
                           nextPage = !nextPage;
                         });
                       },
@@ -383,10 +383,10 @@ class _ScanSerialBoxState extends State<ScanSerialBox> {
                       ),
                       onPressed: () {
                         setState(() {
-                          nextPage = !nextPage;
                           pageController.nextPage(
                               duration: Duration(microseconds: 500),
                               curve: Curves.easeIn);
+                          nextPage = !nextPage;
                         });
                       },
                     ),

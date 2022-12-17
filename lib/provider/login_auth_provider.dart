@@ -1,15 +1,15 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
 import 'dart:io';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wearhouse/const/config.dart';
+import 'package:warehouse/const/config.dart';
 import 'package:flutter/material.dart';
+import 'package:warehouse/screens/Count/scan_count_container.dart';
+import 'package:warehouse/services/alert_box.dart';
 
-import 'package:wearhouse/services/snackbar.dart';
+import 'package:warehouse/services/snackbar.dart';
 import 'package:http/http.dart' as http;
-import 'package:wearhouse/screens/home_page.dart';
+import 'package:warehouse/screens/home_page.dart';
 
 import '../services/dialogue.dart';
 import 'device_info.dart';
@@ -101,7 +101,7 @@ class AuthProvider with ChangeNotifier {
           Uri.parse('http://eiuat.seedors.com:8290/seedor-api-login'),
           headers: header,
           body: body);
-      debugPrint("http://eiuat.seedors.com:8290/customer-app/login");
+      debugPrint("http://eiuat.seedors.com:8290/seedor-api-login");
       debugPrint("${response.body}hauwhdoaodhu");
       var jsonData = json.decode(response.body);
       if (response.statusCode == 200) {
@@ -139,6 +139,7 @@ class AuthProvider with ChangeNotifier {
         prefs.setString('clientid', jsonData['clientid'].toString());
         prefs.setString('seedorname', jsonData['seedorname'].toString());
 
+        // ignore: use_build_context_synchronously
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
@@ -152,9 +153,10 @@ class AuthProvider with ChangeNotifier {
           service.customDialog(
               context, "Password", "Please enter the correct password");
         } else {
-          await globalSnackBar.genarelSnackbar(
-              context: context,
-              text: "Something went wrong please try again later");
+          if (jsonData["description"] == jsonData["description"]) {
+            await globalSnackBar.genarelSnackbar(
+                context: context, text: "please check email and password");
+          }
         }
         _isLoading = false;
         notifyListeners();
