@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:wearhouse/screens/PutAway/bottom_widget_putaway.dart';
+import 'package:wearhouse/screens/PutAway/put_away_widget/bottom_widget_putaway.dart';
 import 'package:wearhouse/services/scanner/put_away_orders_scanner.dart';
 
-import '../../const/color.dart';
+import '../../../const/color.dart';
 
 class PutAwayOrdersLine extends StatefulWidget {
   const PutAwayOrdersLine({super.key});

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:wearhouse/services/scanner/put_away_orders_scanner.dart';
 
-import '../../const/color.dart';
-import '../home_page.dart';
+import '../../../const/color.dart';
+import '../../home_page.dart';
 
 class BottomWidget2 extends StatefulWidget {
   String? barcode;

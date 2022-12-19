@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:wearhouse/provider/login_auth_provider.dart';
 import 'package:wearhouse/provider/login_details.provider.dart';
 import 'package:wearhouse/provider/recive_orders_provider.dart';
+import 'package:wearhouse/routes.dart';
 import 'package:wearhouse/screens/PickOrder/scanSerial.dart';
 import 'package:wearhouse/screens/home_page.dart';
 import 'package:wearhouse/screens/splashscreen.dart';
@@ -41,12 +42,13 @@ class MyApp extends StatelessWidget {
         ),
         home: SplashScreen(),
         debugShowCheckedModeBanner: false,
-        routes: const {
-          // 'login-screen': (context) => const LoginPage(),
-          // 'recieve-page': (context) => const ReceiveOrders(),
-          // 'home_page': (context) => const MyHomePage(),
-          // 'orders_page': (context) =>  OrdersSelectPage(),
-        },
+        routes: customRoutes,
+        // const {
+        //   // 'login-screen': (context) => const LoginPage(),
+        //   // 'recieve-page': (context) => const ReceiveOrders(),
+        //   // 'home_page': (context) => const MyHomePage(),
+        //   // 'orders_page': (context) =>  OrdersSelectPage(),
+        // },
       ),
     );
   }

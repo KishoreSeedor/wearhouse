@@ -1,12 +1,8 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:wearhouse/const/color.dart';
-import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:wearhouse/models/orders_line_model.dart';
 
 import 'package:wearhouse/services/api/recive_api.dart';
 

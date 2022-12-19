@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:wearhouse/const/color.dart';
 import 'package:wearhouse/provider/login_details.provider.dart';
 import 'package:wearhouse/screens/PickOrder/pick_orders.dart';
-import 'package:wearhouse/screens/PutAway/put_away_orders.dart';
+import 'package:wearhouse/screens/PutAway/put_away_ui_design/put_away_orders.dart';
 
 import 'package:wearhouse/services/api/recive_api.dart';
 
