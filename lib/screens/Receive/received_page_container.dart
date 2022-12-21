@@ -40,17 +40,24 @@ class _ReceivedContainerState extends State<ReceivedContainer> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                widget.companyName,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Expanded(
+                flex: 10,
+                child: Text(
+                  widget.companyName,
+                  overflow: TextOverflow.visible,
+                  maxLines: 1,
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
-              Container(
-                height: widget.height * 0.015,
-                width: widget.width * 0.05,
-                decoration: BoxDecoration(
-                    color: CustomColor.yellow,
-                    borderRadius: BorderRadius.circular(3)),
+              Expanded(
+                flex: 1,
+                child: Container(
+                  height: widget.height * 0.015,
+                  decoration: BoxDecoration(
+                      color: CustomColor.yellow,
+                      borderRadius: BorderRadius.circular(3)),
+                ),
               )
             ],
           ),
@@ -66,6 +73,8 @@ class _ReceivedContainerState extends State<ReceivedContainer> {
           ),
           Text(
             widget.displayName,
+            overflow: TextOverflow.visible,
+            maxLines: 1,
             style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
           ),
           const SizedBox(

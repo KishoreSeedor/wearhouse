@@ -24,7 +24,7 @@ class _PutAwayOrdersScannerState extends State<PutAwayOrdersScanner> {
   bool hasflashlight = false;
   bool isturnon = false;
 
-  final player = AudioPlayer();
+  // final player = AudioPlayer(); barcode open
 
   @override
   void dispose() {
@@ -147,7 +147,7 @@ class _PutAwayOrderLineScannerState extends State<PutAwayOrderLineScanner> {
   bool hasflashlight = false;
   bool isturnon = false;
 
-  final player = AudioPlayer();
+  // final player = AudioPlayer(); barcode open
 
   @override
   void dispose() {

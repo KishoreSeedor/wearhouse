@@ -1,9 +1,7 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:wearhouse/screens/PickOrder/pick_orders_line.dart';
-import 'package:wearhouse/services/alert_box.dart';
+
+import 'package:warehouse/services/alert_box.dart';
 import '../../const/color.dart';
 import '../../services/bar_code_scanner_alert.dart';
 
@@ -80,10 +78,10 @@ class _ScanSerialBoxState extends State<ScanSerialBox> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                Expanded(
+                                const Expanded(
                                   flex: 3,
                                   child: Padding(
-                                    padding: const EdgeInsets.only(left: 20),
+                                    padding: EdgeInsets.only(left: 20),
                                     child: Text(
                                       "Scan Bin(Take)",
                                       style: TextStyle(
@@ -363,9 +361,7 @@ class _ScanSerialBoxState extends State<ScanSerialBox> {
                           pageController.previousPage(
                               duration: Duration(microseconds: 500),
                               curve: Curves.easeIn);
-                          globalAlertBox.confirmBox(
-                            context: context,
-                          );
+                          globalAlertBox.confirmBox(context: context);
                           nextPage = !nextPage;
                         });
                       },

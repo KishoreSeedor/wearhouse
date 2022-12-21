@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wearhouse/models/orders_line_model.dart';
-import 'package:wearhouse/models/recived_details_model.dart';
-import 'package:wearhouse/screens/home_page.dart';
-import 'package:wearhouse/services/alert_box.dart';
-import 'package:wearhouse/services/api/recive_api.dart';
-import 'package:wearhouse/services/barcode_scanner2.dart';
 import '../../const/color.dart';
-
+import '../../models/orders_line_model.dart';
+import '../../models/recived_details_model.dart';
+import '../../services/api/recive_api.dart';
+import '../../services/barcode_scanner2.dart';
+import '../home_page.dart';
 import 'received_order_line2.dart';
 
 List<OrderLine> globalorderLine = [];
@@ -80,7 +78,7 @@ class _OrdersLinePage1State extends State<OrdersLinePage1> {
                       .orderLine(
                           context: context,
                           domain: widget.barcode,
-                          pickingId: ''),
+                          pickingId: widget.id),
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
@@ -127,326 +125,339 @@ class _OrdersLinePage1State extends State<OrdersLinePage1> {
             future: particular,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return SafeArea(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              top: height * 0.04, left: width * 0.06),
-                          child: Container(
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Order No :",
-                                        style: TextStyle(
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                      Text(
-                                        snapshot.data!.displayName,
-                                        style: const TextStyle(
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: height * 0.03,
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.only(bottom: height * 0.01),
-                                    child: Row(
+                return snapshot.hasError
+                    ? Center(child: Text(snapshot.error.toString()))
+                    : SafeArea(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    top: height * 0.04, left: width * 0.06),
+                                child: Container(
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        const Text(
-                                          "Sender    :",
-                                          style: TextStyle(
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.w500),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              "Order No :",
+                                              style: TextStyle(
+                                                  fontSize: 22,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                            Text(
+                                              snapshot.data!.displayName,
+                                              style: const TextStyle(
+                                                  fontSize: 22,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ],
                                         ),
-                                        Expanded(
-                                          flex: 1,
-                                          child: Text(
-                                            snapshot.data!.companyName,
-                                            style: const TextStyle(
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.w500),
+                                        SizedBox(
+                                          height: height * 0.03,
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              bottom: height * 0.01),
+                                          child: Row(
+                                            children: [
+                                              const Text(
+                                                "Sender    :",
+                                                style: TextStyle(
+                                                    fontSize: 22,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              ),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Text(
+                                                  snapshot.data!.companyName,
+                                                  style: const TextStyle(
+                                                      fontSize: 22,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                ]),
-                          ),
-                        ),
-                        const Divider(
-                          thickness: 3,
-                          color: CustomColor.yellow,
-                        ),
-                        Expanded(
-                          child: FutureBuilder<List<OrderLine>>(
-                              future: quantity,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  globalorderLine = snapshot.data!;
+                                      ]),
+                                ),
+                              ),
+                              const Divider(
+                                thickness: 3,
+                                color: CustomColor.yellow,
+                              ),
+                              Expanded(
+                                child: FutureBuilder<List<OrderLine>>(
+                                    future: quantity,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        globalorderLine = snapshot.data!;
 
-                                  print(snapshot.data!.length);
-                                  return ListView.separated(
-                                    shrinkWrap: true,
-                                    itemBuilder: (context, index) {
-                                      print(snapshot.data!.length);
-                                      print(
-                                          "global orderline + $globalorderLine");
-                                      print(
-                                          "quantityDone+ ${snapshot.data![index].quantityDone.toString()}");
-                                      print(
-                                          "productonquantity + ${snapshot.data![index].productOnQty.toString()}");
+                                        print(snapshot.data!.length);
+                                        return ListView.separated(
+                                          shrinkWrap: true,
+                                          itemBuilder: (context, index) {
+                                            print(snapshot.data!.length);
+                                            print(
+                                                "global orderline + $globalorderLine");
+                                            print(
+                                                "quantityDone+ ${snapshot.data![index].quantityDone.toString()}");
+                                            print(
+                                                "productonquantity + ${snapshot.data![index].productOnQty.toString()}");
 
-                                      if (snapshot.data![index].quantityDone
-                                              .toString() ==
-                                          snapshot.data![index].productOnQty
-                                              .toString()) {
-                                        quantityChecker += [1];
-                                      }
-                                      // }
-                                      print(
-                                          "quantityChecker + ${int.parse(quantityChecker.length.toString()).toString()}");
-                                      return Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () {
-                                              // Navigator.pop(context);
-                                              setState(() {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        OrederLinePage2(
-                                                      barcode: widget.barcode,
-                                                      value:
-                                                          snapshot.data![index],
-                                                    ),
-                                                  ),
-                                                );
-                                              });
-                                            },
-                                            child: Container(
-                                              padding: const EdgeInsets.all(17),
-                                              margin: const EdgeInsets.all(10),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                                color: CustomColor.gray200,
-                                              ),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: width * 0.03),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            snapshot
-                                                                .data![index]
-                                                                .productId,
-                                                            style: const TextStyle(
-                                                                fontSize: 24,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: CustomColor
-                                                                    .blackcolor2),
+                                            if (snapshot
+                                                    .data![index].quantityDone
+                                                    .toString() ==
+                                                snapshot
+                                                    .data![index].productOnQty
+                                                    .toString()) {
+                                              quantityChecker += [1];
+                                            }
+                                            // }
+                                            print(
+                                                "quantityChecker + ${int.parse(quantityChecker.length.toString()).toString()}");
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    // Navigator.pop(context);
+                                                    setState(() {
+                                                      Navigator.pushReplacement(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              OrederLinePage2(
+                                                            barcode:
+                                                                widget.barcode,
+                                                            value: snapshot
+                                                                .data![index],
                                                           ),
-                                                          Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                              vertical:
-                                                                  height * 0.04,
-                                                            ),
-                                                            child: Text(
-                                                              snapshot
-                                                                  .data![index]
-                                                                  .productName,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .fade,
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .start,
-                                                              style: const TextStyle(
-                                                                  fontSize: 15,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  color: CustomColor
-                                                                      .blackcolor2),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                        ),
+                                                      );
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            17),
+                                                    margin:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                      color:
+                                                          CustomColor.gray200,
                                                     ),
-                                                  ),
-
-                                                  // Expanded(
-                                                  //   flex: 17,
-                                                  //   child: Container(
-                                                  //     height: height * 0.15,
-                                                  //     width: width * 0.001,
-                                                  //     decoration: BoxDecoration(
-                                                  //         border: Border.all(
-                                                  //             color: CustomColor
-                                                  //                 .blackcolor,
-                                                  //             width: width *
-                                                  //                 0.004),
-                                                  //         borderRadius:
-                                                  //             BorderRadius
-                                                  //                 .circular(
-                                                  //                     10),
-                                                  //         color: CustomColor
-                                                  //             .backgroundColor),
-                                                  //     child: Image.asset(
-                                                  //       "assets/images/speaker.png",
-                                                  //       fit: BoxFit.contain,
-                                                  //     ),
-                                                  //   ),
-                                                  // ),
-                                                  // SizedBox(
-                                                  //   width: width * 0.2,
-                                                  // ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Column(
+                                                    child: Row(
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
-                                                              .end,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
+                                                              .start,
                                                       children: [
-                                                        Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .end,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .end,
-                                                          children: [
-                                                            Text(
-                                                              snapshot
-                                                                  .data![index]
-                                                                  .quantityDone,
-                                                              style: const TextStyle(
-                                                                  color: CustomColor
-                                                                      .blackcolor2,
-                                                                  fontSize: 23,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
+                                                        Expanded(
+                                                          flex: 2,
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: width *
+                                                                        0.03),
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  snapshot
+                                                                      .data![
+                                                                          index]
+                                                                      .productId,
+                                                                  style: const TextStyle(
+                                                                      fontSize:
+                                                                          24,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: CustomColor
+                                                                          .blackcolor2),
+                                                                ),
+                                                                Padding(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .symmetric(
+                                                                    vertical:
+                                                                        height *
+                                                                            0.04,
+                                                                  ),
+                                                                  child: Text(
+                                                                    snapshot
+                                                                        .data![
+                                                                            index]
+                                                                        .productName,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .fade,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                    style: const TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w500,
+                                                                        color: CustomColor
+                                                                            .blackcolor2),
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                            Text(
-                                                              "/${snapshot.data![index].productOnQty}",
-                                                              style: const TextStyle(
-                                                                  color: CustomColor
-                                                                      .blackcolor2,
-                                                                  fontSize: 23,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                            ),
-                                                          ],
+                                                          ),
+                                                        ),
+
+                                                        // Expanded(
+                                                        //   flex: 17,
+                                                        //   child: Container(
+                                                        //     height: height * 0.15,
+                                                        //     width: width * 0.001,
+                                                        //     decoration: BoxDecoration(
+                                                        //         border: Border.all(
+                                                        //             color: CustomColor
+                                                        //                 .blackcolor,
+                                                        //             width: width *
+                                                        //                 0.004),
+                                                        //         borderRadius:
+                                                        //             BorderRadius
+                                                        //                 .circular(
+                                                        //                     10),
+                                                        //         color: CustomColor
+                                                        //             .backgroundColor),
+                                                        //     child: Image.asset(
+                                                        //       "assets/images/speaker.png",
+                                                        //       fit: BoxFit.contain,
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
+                                                        // SizedBox(
+                                                        //   width: width * 0.2,
+                                                        // ),
+                                                        Expanded(
+                                                          flex: 1,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .end,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .end,
+                                                            children: [
+                                                              Row(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .end,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .end,
+                                                                children: [
+                                                                  Text(
+                                                                    snapshot
+                                                                        .data![
+                                                                            index]
+                                                                        .quantityDone,
+                                                                    style: const TextStyle(
+                                                                        color: CustomColor
+                                                                            .blackcolor2,
+                                                                        fontSize:
+                                                                            23,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  ),
+                                                                  Text(
+                                                                    "/${snapshot.data![index].productOnQty}",
+                                                                    style: const TextStyle(
+                                                                        color: CustomColor
+                                                                            .blackcolor2,
+                                                                        fontSize:
+                                                                            23,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              SizedBox(
+                                                                height: height *
+                                                                    0.02,
+                                                              ),
+                                                              const Text(
+                                                                "PCS",
+                                                                style: TextStyle(
+                                                                    color: CustomColor
+                                                                        .blackcolor2,
+                                                                    fontSize:
+                                                                        20,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500),
+                                                              )
+                                                            ],
+                                                          ),
                                                         ),
                                                         SizedBox(
-                                                          height: height * 0.02,
+                                                          width: width * 0.03,
                                                         ),
-                                                        const Text(
-                                                          "PCS",
-                                                          style: TextStyle(
-                                                              color: CustomColor
-                                                                  .blackcolor2,
-                                                              fontSize: 20,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500),
+                                                        Container(
+                                                          height:
+                                                              height * 0.015,
+                                                          width: width * 0.05,
+                                                          decoration: BoxDecoration(
+                                                              color: int.parse(snapshot.data![index].quantityDone) == 0
+                                                                  ? CustomColor.yellow
+                                                                  : int.parse(snapshot.data![index].quantityDone) < int.parse(snapshot.data![index].productOnQty)
+                                                                      ? CustomColor.orangecolor
+                                                                      : int.parse(snapshot.data![index].quantityDone) == int.parse(snapshot.data![index].productOnQty)
+                                                                          ? CustomColor.greencolor
+                                                                          : CustomColor.yellow,
+                                                              borderRadius: BorderRadius.circular(3)),
                                                         )
                                                       ],
                                                     ),
                                                   ),
-                                                  SizedBox(
-                                                    width: width * 0.03,
-                                                  ),
-                                                  Container(
-                                                    height: height * 0.015,
-                                                    width: width * 0.05,
-                                                    decoration: BoxDecoration(
-                                                        color: int.parse(snapshot
-                                                                    .data![
-                                                                        index]
-                                                                    .quantityDone) ==
-                                                                0
-                                                            ? CustomColor.yellow
-                                                            : int.parse(snapshot.data![index].quantityDone) <
-                                                                    int.parse(snapshot
-                                                                        .data![
-                                                                            index]
-                                                                        .productOnQty)
-                                                                ? CustomColor
-                                                                    .orangecolor
-                                                                : int.parse(snapshot.data![index].quantityDone) ==
-                                                                        int.parse(snapshot
-                                                                            .data![
-                                                                                index]
-                                                                            .productOnQty)
-                                                                    ? CustomColor
-                                                                        .greencolor
-                                                                    : CustomColor
-                                                                        .yellow,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(3)),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                    itemCount: snapshot.data!.length,
-                                    separatorBuilder:
-                                        (BuildContext context, int itemCount) {
-                                      return const Divider(
-                                        thickness: 3,
-                                        color: CustomColor.yellow,
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  return const Center(
-                                    child: CircularProgressIndicator(
-                                        color: CustomColor.yellow),
-                                  );
-                                }
-                              }),
-                        ),
-                      ]),
-                );
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                          itemCount: snapshot.data!.length,
+                                          separatorBuilder:
+                                              (BuildContext context,
+                                                  int itemCount) {
+                                            return const Divider(
+                                              thickness: 3,
+                                              color: CustomColor.yellow,
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        return const Center(
+                                          child: CircularProgressIndicator(
+                                              color: CustomColor.yellow),
+                                        );
+                                      }
+                                    }),
+                              ),
+                            ]),
+                      );
               } else {
                 return const Center(
                   child: CircularProgressIndicator(color: CustomColor.yellow),

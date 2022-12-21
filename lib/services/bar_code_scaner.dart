@@ -1,12 +1,12 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
-import 'package:wearhouse/const/color.dart';
-import 'package:audioplayers/audioplayers.dart';
 
-import 'package:wearhouse/services/api/recive_api.dart';
-
+import '../const/color.dart';
 import '../screens/Receive/recieved_orders_select.dart';
+import 'api/recive_api.dart';
+
 
 class BarcodeScannerPage extends StatefulWidget {
   BarcodeScannerPage({
@@ -37,7 +37,7 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
   bool hasflashlight = false;
   bool isturnon = false;
 
-  final player = AudioPlayer();
+  // final player = AudioPlayer();
 
   @override
   void dispose() {

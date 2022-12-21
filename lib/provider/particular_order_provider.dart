@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:wearhouse/models/orders_line_model.dart';
-import 'package:wearhouse/provider/recive_orders_provider.dart';
-import 'package:wearhouse/services/api/recive_api.dart';
+import 'package:warehouse/models/orders_line_model.dart';
+import 'package:warehouse/services/api/recive_api.dart';
 
 class ParticularProvider extends ChangeNotifier {
   List<OrderLine> _particular = [];

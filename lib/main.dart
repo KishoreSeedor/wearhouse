@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wearhouse/provider/login_auth_provider.dart';
-import 'package:wearhouse/provider/login_details.provider.dart';
-import 'package:wearhouse/provider/recive_orders_provider.dart';
-import 'package:wearhouse/routes.dart';
-import 'package:wearhouse/screens/PickOrder/scanSerial.dart';
-import 'package:wearhouse/screens/home_page.dart';
-import 'package:wearhouse/screens/splashscreen.dart';
-import 'package:wearhouse/services/api/recive_api.dart';
-import 'provider/device_info.dart';
+import 'package:warehouse/provider/device_info.dart';
+import 'package:warehouse/provider/login_auth_provider.dart';
+import 'package:warehouse/provider/login_details.provider.dart';
+import 'package:warehouse/provider/recive_orders_provider.dart';
+import 'package:warehouse/routes.dart';
+import 'package:warehouse/screens/PutAway/put_away_provider/put_away_orderline_provider.dart';
+import 'package:warehouse/screens/PutAway/put_away_provider/put_away_provider.dart';
+import 'package:warehouse/screens/splashscreen.dart';
+import 'package:warehouse/services/api/recive_api.dart';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,8 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(value: ParticularOrders()),
         ChangeNotifierProvider.value(value: RecieveAPI()),
+        ChangeNotifierProvider.value(value: PutAwayProvider()),
+        ChangeNotifierProvider.value(value: PutAwayOrderLineProvid())
 
         // ChangeNotifierProvider.value(value: const MyHomePage())
       ],
@@ -40,7 +43,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: SplashScreen(),
+        home: const SplashScreen(),
         debugShowCheckedModeBanner: false,
         routes: customRoutes,
         // const {

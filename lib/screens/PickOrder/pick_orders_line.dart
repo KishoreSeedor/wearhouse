@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wearhouse/screens/PickOrder/bottom_widget_pick.dart';
-import 'package:wearhouse/screens/PickOrder/scanSerial.dart';
+import 'package:warehouse/screens/PickOrder/bottom_widget_pick.dart';
+import 'package:warehouse/screens/PickOrder/scanSerial.dart';
 
 import '../../const/color.dart';
 
@@ -12,6 +12,11 @@ class PickOrderLines extends StatefulWidget {
 }
 
 class _PickOrderLinesState extends State<PickOrderLines> {
+  PageRouteBuilder opaquePage(Widget page) => PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (BuildContext context, _, __) => page,
+      );
+
   String? barcode;
   @override
   Widget build(BuildContext context) {
@@ -26,14 +31,13 @@ class _PickOrderLinesState extends State<PickOrderLines> {
               padding: EdgeInsets.only(left: width * 0.02),
               child: IconButton(
                 icon: Image.asset(
-                  "assets/images/putawaylogo.png",
-                  scale: 0.9,
+                  "assets/images/pick_logo2.png",
                 ),
                 onPressed: () {},
               ),
             ),
             title: const Text(
-              "Put Away Order Lines",
+              "Pick Order Lines",
               style: TextStyle(
                   fontSize: 22,
                   color: Colors.black,
@@ -134,13 +138,12 @@ class _PickOrderLinesState extends State<PickOrderLines> {
                       GestureDetector(
                         onTap: () {
                           // Navigator.pop(context);
-
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ScanSerialBox(
-                                        barcodeValue: barcodeValue.toString(),
-                                      )));
+                            context,
+                            opaquePage(ScanSerialBox(
+                              barcodeValue: barcodeValue.toString(),
+                            )),
+                          );
                         },
                         child: Container(
                           padding: const EdgeInsets.all(17),

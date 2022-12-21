@@ -1,10 +1,8 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:provider/provider.dart';
 
 import '../../const/color.dart';
-import '../../services/api/recive_api.dart';
 
 String? code;
 String? scannerValue = code;
@@ -120,7 +118,7 @@ class _PickOrderScannerState extends State<PickOrderScanner> {
 
     if (!_screenOpened) {
       String code = qrCode.rawValue.toString().trim();
-      AudioPlayer().play(AssetSource("audio/scanner.mp3"));
+      // AudioPlayer().play(AssetSource("audio/scanner.mp3")); barcode open
       print("QRcode Fount -->$code");
 
       _screenOpened = true;

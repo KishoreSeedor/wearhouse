@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:wearhouse/screens/PutAway/put_away_ui_design/put_away_orders_select.dart';
+import 'package:provider/provider.dart';
+
 
 import '../../../const/color.dart';
+import '../put_away_model/put_away_orderline_model.dart';
+import '../put_away_orders_select.dart';
 
 class PutAwayOrderProdWidget extends StatelessWidget {
   const PutAwayOrderProdWidget({super.key});
@@ -9,9 +12,11 @@ class PutAwayOrderProdWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final putaway = Provider.of<PutAwayOrdersModel>(context);
     return InkWell(
       onTap: () {
-        Navigator.of(context).pushNamed(PutAwayOrdersSelect.routeName);
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (ctx) => PutAwayOrdersSelect(putawayOrder: putaway,)));
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -20,17 +25,28 @@ class PutAwayOrderProdWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'companyName',
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Expanded(
+                flex: 7,
+                child: Text(
+                  putaway.companyName,
+                  overflow: TextOverflow.fade,
+                  maxLines: 2,
+                  style: const TextStyle(
+                      fontSize: 17, fontWeight: FontWeight.bold),
+                ),
               ),
-              Container(
-                height: size.height * 0.015,
-                width: size.width * 0.05,
-                decoration: BoxDecoration(
-                    color: CustomColor.yellow,
-                    borderRadius: BorderRadius.circular(3)),
+              SizedBox(
+                width: 20,
+              ),
+              Expanded(
+                flex: 1,
+                child: Container(
+                  height: size.height * 0.015,
+                  width: size.width * 0.05,
+                  decoration: BoxDecoration(
+                      color: CustomColor.yellow,
+                      borderRadius: BorderRadius.circular(3)),
+                ),
               )
             ],
           ),
@@ -38,21 +54,24 @@ class PutAwayOrderProdWidget extends StatelessWidget {
             height: 5,
           ),
           Text(
-            'createDate',
+            putaway.createDate,
+            overflow: TextOverflow.fade,
             style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
           ),
           const SizedBox(
             height: 5,
           ),
           Text(
-            'displayName',
+           putaway.displayName,
+            overflow: TextOverflow.fade,
             style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
           ),
           const SizedBox(
             height: 5,
           ),
           Text(
-            'origin',
+           putaway.origin,
+            overflow: TextOverflow.fade,
             style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
           ),
         ],

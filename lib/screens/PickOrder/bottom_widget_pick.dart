@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wearhouse/screens/PickOrder/scanner_pick.dart';
+import 'package:warehouse/screens/PickOrder/scanner_pick.dart';
 
 import '../../const/color.dart';
 import '../home_page.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wearhouse/screens/PickOrder/bottom_widget_pick.dart';
-import 'package:wearhouse/screens/PickOrder/pick_orders_line.dart';
+import 'package:warehouse/screens/PickOrder/bottom_widget_pick.dart';
+import 'package:warehouse/screens/PickOrder/pick_orders_line.dart';
 
 import '../../const/color.dart';
 import '../Receive/received_page_container.dart';
