@@ -1,18 +1,20 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:warehouse/screens/PutAway/bottom_widget_putaway.dart';
+
 import 'package:warehouse/screens/PutAway/put_away_orders_select.dart';
 import 'package:warehouse/screens/PutAway/put_away_provider/put_away_provider.dart';
+import 'package:warehouse/screens/PutAway/put_away_widget/bottom_widget_putaway.dart';
+import 'package:warehouse/screens/PutAway/put_away_widget/put_away_order_prod_widget.dart';
 import 'package:warehouse/screens/PutAway/utilites/empty_screen.dart';
 import 'package:warehouse/screens/PutAway/utilites/error_screen.dart';
 import 'package:warehouse/screens/PutAway/utilites/loading_screen.dart';
 
-import '../../const/color.dart';
-import '../../models/reciveorders_model.dart';
-import '../../services/api/recive_api.dart';
-import '../Receive/received_page_container.dart';
-import 'put_away_widget/custom_appbar_putAway.dart';
+import '../../../const/color.dart';
+import '../../../models/reciveorders_model.dart';
+import '../../../services/api/recive_api.dart';
+import '../../Receive/received_page_container.dart';
+import '../put_away_widget/custom_appbar_putAway.dart';
 
 class PutAwayOrdersScreen extends StatefulWidget {
   const PutAwayOrdersScreen({super.key});
@@ -103,38 +105,24 @@ class _PutAwayOrdersScreenState extends State<PutAwayOrdersScreen> {
                       : ListView.separated(
                           keyboardDismissBehavior:
                               ScrollViewKeyboardDismissBehavior.onDrag,
-                          itemCount: 4,
+                          itemCount:  data.putAwayOrderLine.length,
                           itemBuilder: (context, index) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                    padding: const EdgeInsets.all(13),
-                                    margin: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: CustomColor.gray200,
-                                    ),
-                                    child: ReceivedContainer(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const PutAwayOrdersSelect()));
-                                        setState(() {
-                                          _visible = false;
-                                        });
-                                      },
-                                      height: height,
-                                      width: width,
-                                      companyName: "Kishore",
-                                      createDate: "11.11.22",
-                                      origin: "India",
-                                      displayName: "Kishore",
-                                    )),
-                              ],
+                            return ChangeNotifierProvider.value(
+                              value: data.putAwayOrderLine[index],
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                      padding: const EdgeInsets.all(13),
+                                      margin: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: CustomColor.gray200,
+                                      ),
+                                      child:const PutAwayOrderProdWidget()),
+                                ],
+                              ),
                             );
                           },
                           separatorBuilder:
@@ -145,9 +133,10 @@ class _PutAwayOrdersScreenState extends State<PutAwayOrdersScreen> {
                             );
                           },
                         ),
-          floatingActionButton: BottomWidget2(
-            barcode: barcode,
-          )),
+          // floatingActionButton: BottomWidget2(
+          //   barcode: barcode,
+          // )
+          ),
     );
   }
 }

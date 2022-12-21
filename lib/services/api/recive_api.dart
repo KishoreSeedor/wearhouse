@@ -9,7 +9,7 @@ import '../../models/quality_value.dart';
 import '../../models/recived_details_model.dart';
 import '../../models/reciveorders_model.dart';
 import '../../provider/login_details.provider.dart';
-import '../../screens/PutAway/put_away_orders.dart';
+import '../../screens/PutAway/put_away_ui_design/put_away_orders.dart';
 import '../alert_box.dart';
 import '../snackbar.dart';
 

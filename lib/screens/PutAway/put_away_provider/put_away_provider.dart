@@ -4,16 +4,15 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:warehouse/const/config.dart';
 import 'package:warehouse/screens/PutAway/put_away_model/put_away_orderline_model.dart';
-import 'package:warehouse/screens/PutAway/put_away_orders.dart';
-import 'package:warehouse/screens/PutAway/put_away_orders_details.dart';
 
 import '../../../provider/login_details.provider.dart';
 
 class PutAwayProvider with ChangeNotifier {
-  List<PutAwayOrdersLineModel> _putAwayOrderLine = [];
+  List<PutAwayOrdersModel> _putAwayOrderLine = [];
 
-  List<PutAwayOrdersLineModel> get putAwayOrderLine {
+  List<PutAwayOrdersModel> get putAwayOrderLine {
     return _putAwayOrderLine;
   }
 
@@ -37,7 +36,8 @@ class PutAwayProvider with ChangeNotifier {
       _orderlineLoading = true;
 
       final user = Provider.of<UserDetails>(context, listen: false);
-      List<PutAwayOrdersLineModel> loadData = [];
+
+      List<PutAwayOrdersModel> loadData = [];
       var headers = {
         'Cookie':
             'session_id=a92b5a9151dc99504afb48b311aadcdbde48fd28; session_id=e2fc46ab8d73ddb088f3406a1ee387a52b0bcbb1'
@@ -45,14 +45,16 @@ class PutAwayProvider with ChangeNotifier {
 
       var response = await http.get(
           Uri.parse(
-              "http://eiuat.seedors.com:8290/seedor-api/warehouse/received-orders?fields={'id','scheduled_date','origin','display_name','date','partner_id','create_date','barcode'}&clientid=${user.clientID}"),
+              "$baseApiUrl/seedor-api/warehouse/received-orders?fields={'id','scheduled_date','origin','display_name','date','partner_id','create_date','barcode'}&clientid=${user.clientID}&domain=[('picking_state','=','2')]"),
           headers: headers);
+      print(
+          "$baseApiUrl/seedor-api/warehouse/received-orders?fields={'id','scheduled_date','origin','display_name','date','partner_id','create_date','barcode'}&clientid=${user.clientID}&domain=[('picking_state','=','2')]");
       var jsonData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(response.body);
         print(jsonData.length);
         for (var i = 0; i < jsonData.length; i++) {
-          print('-----');
+          print('----- ${jsonData[i]["date"].toString()}');
           String partnerId;
           String companyName;
           if (jsonData[i]["partner_id"] == false) {
@@ -63,7 +65,7 @@ class PutAwayProvider with ChangeNotifier {
             companyName = jsonData[i]["partner_id"][1].toString();
           }
 
-          loadData.add(PutAwayOrdersLineModel(
+          loadData.add(PutAwayOrdersModel(
             barcode: jsonData[i]["barcode"].toString(),
             createDate: jsonData[i]["create_date"].toString(),
             date: jsonData[i]["date"].toString(),
@@ -109,13 +111,12 @@ class PutAwayProvider with ChangeNotifier {
       _orderlineErrorLoading = false;
       _orderlIneErrorMessage = "Invalid Data Format";
       notifyListeners();
+    } catch (e) {
+      _orderlineLoading = false;
+      _orderlineErrorLoading = false;
+      _orderlIneErrorMessage = "Some thing went wtong";
+      notifyListeners();
+      return [400, _putAwayOrderLine];
     }
-    //  catch (e) {
-    //   _orderlineLoading = false;
-    //   _orderlineErrorLoading = false;
-    //   _orderlIneErrorMessage = "Some thing went wtong";
-    //   notifyListeners();
-    //   return [400, _putAwayOrderLine];
-    // }
   }
 }

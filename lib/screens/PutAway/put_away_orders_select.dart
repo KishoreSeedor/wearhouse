@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:warehouse/screens/PutAway/put_away_model/put_away_orderline_model.dart';
 
-import 'package:warehouse/screens/PutAway/put_away_orders_details.dart';
+
+import 'package:warehouse/screens/PutAway/put_away_ui_design/put_away_orders_line.dart';
+import 'package:warehouse/screens/PutAway/put_away_widget/custom_appbar_putAway.dart';
 
 import '../../const/color.dart';
 import '../Receive/received_page_container.dart';
 
+
 class PutAwayOrdersSelect extends StatefulWidget {
-  const PutAwayOrdersSelect({super.key});
+  final PutAwayOrdersModel putawayOrder;
+  const PutAwayOrdersSelect({super.key,required this.putawayOrder});
 
   @override
   State<PutAwayOrdersSelect> createState() => _PutAwayOrdersSelectState();
@@ -23,191 +28,12 @@ class _PutAwayOrdersSelectState extends State<PutAwayOrdersSelect> {
     return Scaffold(
       appBar: AppBar(
         bottom: PreferredSize(
-          preferredSize: _visible ? const Size(0, 400) : const Size(0, 0),
-          child: Container(
-            height: _visible ? height * 0.48 : height * 0,
-            decoration: const BoxDecoration(
-                color: Color(0xFF706E6E),
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(20),
-                    bottomLeft: Radius.circular(20))),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(
-                padding: EdgeInsets.only(
-                    top: height * 0.02,
-                    left: width * 0.15,
-                    bottom: height * 0.005),
-                child: const Text(
-                  "Location",
-                  style: TextStyle(
-                      color: CustomColor.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: width * 0.15),
-                child: SizedBox(
-                  height: height * 0.05,
-                  child: TextField(
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: CustomColor.white,
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide:
-                              const BorderSide(color: Colors.black, width: 2)),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                    top: height * 0.02,
-                    left: width * 0.15,
-                    bottom: height * 0.005),
-                child: const Text(
-                  "Exp,Rec,Date",
-                  style: TextStyle(
-                      color: CustomColor.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: width * 0.15),
-                child: SizedBox(
-                  height: height * 0.05,
-                  child: TextField(
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: CustomColor.white,
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(
-                              color: CustomColor.homepageBgColor, width: 2)),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                    top: height * 0.02,
-                    left: width * 0.15,
-                    bottom: height * 0.005),
-                child: const Text(
-                  "PO Number",
-                  style: TextStyle(
-                      color: CustomColor.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: width * 0.15),
-                child: SizedBox(
-                  height: height * 0.05,
-                  child: TextField(
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: CustomColor.white,
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide:
-                              const BorderSide(color: Colors.black, width: 2)),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                    top: height * 0.02,
-                    left: width * 0.15,
-                    bottom: height * 0.005),
-                child: const Text(
-                  "Assigned User ID",
-                  style: TextStyle(
-                      color: CustomColor.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: width * 0.15),
-                child: SizedBox(
-                  height: height * 0.05,
-                  child: TextField(
-                    decoration: InputDecoration(
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: Image.asset("assets/images/dropdown.png"),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(
-                              color: CustomColor.white, width: 2)),
-                    ),
-                  ),
-                ),
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding:
-                        EdgeInsets.only(top: height * 0.03, left: width * 0.42),
-                    child: SizedBox(
-                      height: height * 0.035,
-                      width: width * 0.26,
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15)),
-                            backgroundColor: CustomColor.whiteGreen,
-                          ),
-                          onPressed: () {},
-                          child: const Text(
-                            "RESET",
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          )),
-                    ),
-                  ),
-                  SizedBox(
-                    width: width * 0.03,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: height * 0.03,
-                    ),
-                    child: SizedBox(
-                      height: height * 0.035,
-                      width: width * 0.26,
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15)),
-                            backgroundColor: const Color(0xFFEDFDDD),
-                          ),
-                          onPressed: () {},
-                          child: const Text(
-                            "APPLY",
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          )),
-                    ),
-                  ),
-                ],
-              ),
-            ]),
-          ),
-        ),
+            preferredSize: _visible ? const Size(0, 400) : const Size(0, 0),
+            child: CustomAppBarPutAway(
+              height: height,
+              width: width,
+              visible: _visible,
+            )),
         backgroundColor: CustomColor.darkwhite,
         leading: Padding(
           padding: const EdgeInsets.only(left: 10),
@@ -260,7 +86,7 @@ class _PutAwayOrdersSelectState extends State<PutAwayOrdersSelect> {
                     Expanded(
                       flex: 4,
                       child: Text(
-                        "1145",
+                       widget.putawayOrder.id,
                         style: const TextStyle(
                             fontSize: 23, fontWeight: FontWeight.bold),
                       ),
@@ -298,16 +124,16 @@ class _PutAwayOrdersSelectState extends State<PutAwayOrdersSelect> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const PutAwayOrdersLine()));
+                            builder: (context) =>  PutAwayOrdersLineScreen(id: widget.putawayOrder.id,name: widget.putawayOrder.displayName,)));
                     _visible = false;
                   });
                 },
                 height: height,
                 width: width,
-                companyName: "Kishore",
-                createDate: "11.11.22",
-                origin: "India",
-                displayName: "Kishore",
+                companyName:  widget.putawayOrder.companyName,
+                createDate: widget.putawayOrder.createDate,
+                origin: widget.putawayOrder.origin,
+                displayName: widget.putawayOrder.displayName,
               ),
             ),
           ],

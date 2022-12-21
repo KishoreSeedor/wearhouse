@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:warehouse/provider/device_info.dart';
+import 'package:warehouse/provider/login_auth_provider.dart';
+import 'package:warehouse/provider/login_details.provider.dart';
+import 'package:warehouse/provider/recive_orders_provider.dart';
+import 'package:warehouse/routes.dart';
+import 'package:warehouse/screens/PutAway/put_away_provider/put_away_orderline_provider.dart';
 import 'package:warehouse/screens/PutAway/put_away_provider/put_away_provider.dart';
-import 'provider/device_info.dart';
-import 'provider/login_auth_provider.dart';
-import 'provider/login_details.provider.dart';
-import 'provider/recive_orders_provider.dart';
-import 'screens/splashscreen.dart';
-import 'services/api/recive_api.dart';
+import 'package:warehouse/screens/splashscreen.dart';
+import 'package:warehouse/services/api/recive_api.dart';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +33,8 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(value: ParticularOrders()),
         ChangeNotifierProvider.value(value: RecieveAPI()),
-        ChangeNotifierProvider.value(value: PutAwayProvider())
+        ChangeNotifierProvider.value(value: PutAwayProvider()),
+        ChangeNotifierProvider.value(value: PutAwayOrderLineProvid())
 
         // ChangeNotifierProvider.value(value: const MyHomePage())
       ],
@@ -41,12 +45,13 @@ class MyApp extends StatelessWidget {
         ),
         home: const SplashScreen(),
         debugShowCheckedModeBanner: false,
-        routes: const {
-          // 'login-screen': (context) => const LoginPage(),
-          // 'recieve-page': (context) => const ReceiveOrders(),
-          // 'home_page': (context) => const MyHomePage(),
-          // 'orders_page': (context) =>  OrdersSelectPage(),
-        },
+        routes: customRoutes,
+        // const {
+        //   // 'login-screen': (context) => const LoginPage(),
+        //   // 'recieve-page': (context) => const ReceiveOrders(),
+        //   // 'home_page': (context) => const MyHomePage(),
+        //   // 'orders_page': (context) =>  OrdersSelectPage(),
+        // },
       ),
     );
   }

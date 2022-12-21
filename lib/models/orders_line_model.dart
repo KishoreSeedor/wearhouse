@@ -1,6 +1,5 @@
 class OrderLine {
-  // ignore: prefer_typing_uninitialized_variables
-  var isVisible;
+ 
 
   OrderLine({
     required this.displayName,
@@ -19,11 +18,9 @@ class OrderLine {
     required this.height,
     required this.weight,
 
-    // required this.visible,
-    // required this.countEnter,
+  
   });
-  // String countEnter;
-  // String visible;
+ 
   String displayName;
   String userid;
   String pickingPartnerId;

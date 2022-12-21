@@ -1,4 +1,6 @@
-class PutAwayOrdersLineModel {
+import 'package:flutter/material.dart';
+
+class PutAwayOrdersModel with ChangeNotifier{
   String barcode;
   String createDate;
   String date;
@@ -11,7 +13,7 @@ class PutAwayOrdersLineModel {
   String transportDate;
   String skuId;
 
-  PutAwayOrdersLineModel({
+  PutAwayOrdersModel({
     required this.barcode,
     required this.createDate,
     required this.date,

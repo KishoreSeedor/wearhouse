@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+
+
+
 import '../const/color.dart';
 import '../provider/login_details.provider.dart';
 import '../services/api/recive_api.dart';
 import 'Count/count_orders.dart';
 import 'PickOrder/pick_orders.dart';
-import 'PutAway/put_away_orders.dart';
+import 'PutAway/put_away_ui_design/put_away_orders.dart';
 import 'Receive/receive_page.dart';
 
 class MyHomePage extends StatefulWidget {
